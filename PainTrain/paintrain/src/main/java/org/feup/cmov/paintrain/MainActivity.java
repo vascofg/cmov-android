@@ -1,20 +1,26 @@
 package org.feup.cmov.paintrain;
 
+import android.accounts.Account;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.google.android.gms.auth.GoogleAuthException;
+import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
+
+import java.io.IOException;
 
 
 public class MainActivity extends Activity implements
@@ -27,7 +33,7 @@ public class MainActivity extends Activity implements
     /* Client used to interact with Google APIs. */
     private GoogleApiClient mGoogleApiClient;
 
-    private TextView mStatus = null, mName = null, mEmail = null;
+    private TextView mStatus = null, mName = null, mEmail = null, mToken = null;
     private MenuItem mActionConnect = null, mActionDisconnect = null;
 
     // ...
@@ -122,7 +128,11 @@ public class MainActivity extends Activity implements
             Person currentPerson = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
             mName.setText(currentPerson.getDisplayName());
         }
-        mEmail.setText(Plus.AccountApi.getAccountName(mGoogleApiClient));
+        String accountName = Plus.AccountApi.getAccountName(mGoogleApiClient);
+        mEmail.setText(accountName);
+
+        new GetIdTokenTask().execute(accountName);
+
         mShouldResolve = false;
         mActionConnect.setEnabled(false);
         mActionDisconnect.setEnabled(true);
@@ -139,6 +149,7 @@ public class MainActivity extends Activity implements
         mStatus = (TextView) findViewById(R.id.status_message);
         mName = (TextView) findViewById(R.id.name);
         mEmail = (TextView) findViewById(R.id.email);
+        mToken = (TextView) findViewById(R.id.token);
 
         // Build GoogleApiClient with access to basic profile
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -197,6 +208,7 @@ public class MainActivity extends Activity implements
 
                 mName.setText("");
                 mEmail.setText("");
+                mToken.setText("");
                 mActionConnect.setEnabled(true);
                 mActionDisconnect.setEnabled(false);
 
@@ -206,5 +218,42 @@ public class MainActivity extends Activity implements
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private class GetIdTokenTask extends AsyncTask<String, Void, String> {
+
+        private static final String SERVER_CLIENT_ID = "286336060185-fnqe7hokq83dbec4oh14vnvqama1aamn.apps.googleusercontent.com";
+
+        @Override
+        protected void onPreExecute() {
+            mToken.setText("Getting user token...");
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            String accountName = params[0];
+            Account account = new Account(accountName, GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE);
+            String scopes = "audience:server:client_id:" + SERVER_CLIENT_ID; // Not the app's client ID.
+            try {
+                return GoogleAuthUtil.getToken(getApplicationContext(), account, scopes);
+            } catch (IOException e) {
+                Log.e(TAG, "Error retrieving ID token.", e);
+                return null;
+            } catch (GoogleAuthException e) {
+                Log.e(TAG, "Error retrieving ID token.", e);
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            Log.i(TAG, "ID token: " + result);
+            if (result != null) {
+                mToken.setText(result);
+            } else {
+                mToken.setText("Error getting token!");
+            }
+        }
+
     }
 }
