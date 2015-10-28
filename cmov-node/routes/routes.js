@@ -2,6 +2,13 @@ var handlers = require('../handlers/handlers.js');
 
 module.exports = [
     {
+        method: 'POST',
+        path: '/auth',
+        handler: function (request, reply) {
+            handlers.authHandler(request, reply);
+        }
+    },
+    {
         method: 'GET',
         path: '/',
         handler: function (request, reply) {

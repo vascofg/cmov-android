@@ -1,3 +1,4 @@
+//var Ticket = require('Ticket.js');
 module.exports = function(sequelize, DataTypes) {
     var User = sequelize.define(
         'User',
@@ -14,20 +15,30 @@ module.exports = function(sequelize, DataTypes) {
             picture: {
                 type: DataTypes.STRING
             },
-            gToken: {
-                type: DataTypes.STRING(1000),
-                unique: true
-            },
-            token: {
-                type: DataTypes.STRING(1000),
-                unique: true
+            isPike: {
+                type: DataTypes.BOOLEAN,
+                allowNull: false
             }
         },
         {
+            classMethods: {
+                associate: function (models) {
+                    User.hasMany(models.Ticket);
+                },
+                findAllUsers: function(userModel) {
+                    return userModel.findAll({
+                        where: {
+                            email: "aa@aa.aa"
+                        }
+                    });
+                }
+            },
             tableName: 'user',
             timestamps: false
         }
     );
+
+    //User.hasMany(Ticket);
 
     return User;
 };
