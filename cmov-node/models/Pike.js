@@ -1,7 +1,7 @@
 //var Ticket = require('Ticket.js');
 module.exports = function(sequelize, DataTypes) {
-    var User = sequelize.define(
-        'User',
+    var Pike = sequelize.define(
+        'Pike',
         {
             email: {
                 type: DataTypes.STRING,
@@ -19,27 +19,19 @@ module.exports = function(sequelize, DataTypes) {
         {
             classMethods: {
                 associate: function (models) {
-                    User.hasMany(models.Ticket);
                 },
-                findAllUsers: function(userModel) {
-                    return userModel.findAll({
-                        where: {
-                            email: "aa@aa.aa"
-                        }
-                    });
-                },
-                addNewUser: function(userModel, email) {
-                    return userModel.create({
+                addNewPike: function(pikeModel, email) {
+                    return pikeModel.create({
                         email: email
                     });
                 }
             },
-            tableName: 'user',
+            tableName: 'pike',
             timestamps: false
         }
     );
 
     //User.hasMany(Ticket);
 
-    return User;
+    return Pike;
 };
