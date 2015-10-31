@@ -8,4 +8,22 @@
     <string name="connected">Connected</string>
     <string name="disconnected">Disconnected</string>
     <string name="connection_error">Connection error</string>
+
+    <string name="label_from_stations">From</string>
+    <string name="label_to_stations">To</string>
+
+    <string name="buy_tickets">Buy tickets</string>
+    <string name="auth">Authenticate</string>
+    <string name="timetable">Timetable</string>
+
+    <string-array name="stations_array">
+        <item>A</item>
+        <item>A2</item>
+        <item>Central</item>
+        <item>B</item>
+        <item>B2</item>
+        <item>C</item>
+        <item>C2</item>
+    </string-array>
+
 </resources>

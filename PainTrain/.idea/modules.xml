@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project version="4">
-  <component name="ProjectModuleManager">
-    <modules>
-      <module fileurl="file://$PROJECT_DIR$/PainTrain.iml" filepath="$PROJECT_DIR$/PainTrain.iml" />
-      <module fileurl="file://$PROJECT_DIR$/paintrain/paintrain.iml" filepath="$PROJECT_DIR$/paintrain/paintrain.iml" />
-    </modules>
-  </component>
-</project>
