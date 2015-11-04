@@ -24,6 +24,6 @@ public class MainActivity extends Activity {
     }
 
     public void launchTimetable(View view) {
-        startActivity(new Intent(this, Timetable.class));
+        startActivity(new Intent(this, TimetableActivity.class));
     }
 }

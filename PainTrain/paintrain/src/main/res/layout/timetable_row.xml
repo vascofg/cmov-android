@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/timetable_row_departure"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="DEPARTURE"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="@dimen/layout_margin"/>
+
+    <TextView
+        android:id="@+id/timetable_row_arrival"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="ARRIVAL"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="@dimen/layout_margin"/>
+
+    <TextView
+        android:id="@+id/timetable_row_departure_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="DEPARTURE TIME"
+        android:layout_below="@id/timetable_row_departure"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="@dimen/layout_margin"/>
+
+    <TextView
+        android:id="@+id/timetable_row_arrival_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/timetable_row_arrival"
+        tools:text="ARRIVAL TIME"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="@dimen/layout_margin"/>
+</RelativeLayout>

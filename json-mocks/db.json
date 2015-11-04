@@ -1,0 +1,74 @@
+{
+  "trips": [
+    {
+      "id": 1,
+      "departure": "A",
+      "departureTime": "10:00",
+      "arrival": "B",
+      "arrivalTime": "11:20"
+    },
+    {
+      "id": 2,
+      "departure": "B",
+      "departureTime": "11:30",
+      "arrival": "A",
+      "arrivalTime": "12:40"
+    },
+    {
+      "id": 3,
+      "departure": "A",
+      "departureTime": "13:00",
+      "arrival": "B",
+      "arrivalTime": "14:20"
+    },
+    {
+      "id": 4,
+      "departure": "B",
+      "departureTime": "14:30",
+      "arrival": "A",
+      "arrivalTime": "15:40"
+    },
+    {
+      "id": 5,
+      "departure": "A",
+      "departureTime": "16:00",
+      "arrival": "B",
+      "arrivalTime": "17:20"
+    },
+    {
+      "id": 6,
+      "departure": "B",
+      "departureTime": "17:30",
+      "arrival": "A",
+      "arrivalTime": "18:40"
+    },
+    {
+      "id": 7,
+      "departure": "Central",
+      "departureTime": "07:00",
+      "arrival": "C",
+      "arrivalTime": "07:45"
+    },
+    {
+      "id": 8,
+      "departure": "C",
+      "departureTime": "08:05",
+      "arrival": "Central",
+      "arrivalTime": "08:50"
+    },
+    {
+      "id": 9,
+      "departure": "Central",
+      "departureTime": "10:00",
+      "arrival": "C",
+      "arrivalTime": "10:45"
+    },
+    {
+      "id": 10,
+      "departure": "C",
+      "departureTime": "11:00",
+      "arrival": "Central",
+      "arrivalTime": "12:00"
+    }
+  ]
+}
