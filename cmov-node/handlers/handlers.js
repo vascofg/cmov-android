@@ -110,3 +110,24 @@ exports.updateHandler = function (request, reply) {
         }
     }
 };
+
+exports.timetableHandler = function (request, reply) {
+
+    var tripModel = request.server.plugins['hapi-sequelized'].db.sequelize.models.Trip;
+
+    tripModel.findAll().then(function(trips) {
+        //console.log(trips);
+        //console.log(trips[0].times.A);
+
+        var times = []
+
+        if (trips) {
+            trips.forEach(function (trip) {
+                //console.log(trip.times);
+                times.push(trip.times);
+            });
+        }
+
+        return reply(times).code(200);
+    });
+};

@@ -22,6 +22,13 @@ module.exports = [
         }
     },
     {
+        method: 'GET',
+        path: '/timetable',
+        handler: function (request, reply) {
+            handlers.timetableHandler(request, reply);
+        }
+    },
+    {
         method: 'PATCH',
         path: '/update',
         handler: function (request, reply) {
