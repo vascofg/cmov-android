@@ -12,8 +12,20 @@ module.exports = [
         method: 'GET',
         path: '/tickets',
         handler: function (request, reply) {
-            console.log("handler");
             handlers.ticketsHandler(request, reply);
+        },
+        config: {
+            auth: {
+                strategy: 'userAuth'
+                //scope: 'user' // or [ 'user', 'admin' ]
+            }
+        }
+    },
+    {
+        method: 'PATCH',
+        path: '/update',
+        handler: function (request, reply) {
+            handlers.updateHandler(request, reply);
         },
         config: {
             auth: {

@@ -69,6 +69,9 @@ exports.authHandler = function (request, reply) {
             }
         });
     });
+};
 
+exports.updateHandler = function (request, reply) {
 
+    var user = request.auth.credentials;
 };
