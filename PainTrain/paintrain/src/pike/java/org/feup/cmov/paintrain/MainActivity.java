@@ -19,11 +19,4 @@ public class MainActivity extends Activity {
         startActivity(new Intent(this, AuthActivity.class));
     }
 
-    public void launchBuyTickets(View view) {
-        startActivity(new Intent(this, BuyTicketsActivity.class));
-    }
-
-    public void launchTimetable(View view) {
-        startActivity(new Intent(this, TimetableActivity.class));
-    }
 }

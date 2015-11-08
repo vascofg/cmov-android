@@ -10,9 +10,9 @@
     <string name="label_from_stations">From</string>
     <string name="label_to_stations">To</string>
 
-    <string name="buy_tickets">Buy tickets</string>
     <string name="auth">Authenticate</string>
-    <string name="timetable">Timetable</string>
+
+    <string name="base_url">http://cmov-trains.herokuapp.com</string>
 
     <string-array name="stations_array">
         <item>A</item>

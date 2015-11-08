@@ -4,4 +4,7 @@
     <string name="role">Customer</string>
 
     <string name="nfc">NFC</string>
+
+    <string name="buy_tickets">Buy tickets</string>
+    <string name="timetable">Timetable</string>
 </resources>
