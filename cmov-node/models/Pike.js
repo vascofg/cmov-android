@@ -16,7 +16,7 @@ module.exports = function(sequelize, DataTypes) {
                 type: DataTypes.STRING
             },
             token: {
-                type: DataTypes.STRING(1000),
+                type: DataTypes.TEXT,
                 unique: true
             },
             expireTime: {
