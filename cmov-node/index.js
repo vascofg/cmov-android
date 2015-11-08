@@ -5,7 +5,7 @@ var manifest = {
     connections: [
         {
             port: process.env.PORT || 3000,
-            host: 'localhost'
+            host: '0.0.0.0'
         }
     ],
     plugins: [
@@ -121,5 +121,6 @@ Glue.compose(manifest, options, function (err, server) {
     server.start(function () {
 
         console.log('Hapi days!');
+        console.log(server.info.uri);
     });
 });

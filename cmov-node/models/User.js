@@ -53,6 +53,9 @@ module.exports = function(sequelize, DataTypes) {
                         }
                     });
                 }
+                //updateCardInfoForUserWithEmail: function(userModel, email, card, cvv, date) {
+                //
+                //}
             },
             tableName: 'user',
             timestamps: false
