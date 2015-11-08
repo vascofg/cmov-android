@@ -126,10 +126,19 @@ exports.timetableHandler = function (request, reply) {
                 //console.log(trip.times);
                 var returnTrip = {};
                 returnTrip.id = trip.id;
-                returnTrip.times = trip.times;
+                //returnTrip.times = trip.times;
+
+                var tripsArray = []
+                for (var station in trip.times) {
+                    tripsArray.push({station: station, time: trip.times[station]});
+                }
+
+                returnTrip.trips = tripsArray;
                 times.push(returnTrip);
             });
         }
+
+
 
         return reply(times).code(200);
     });
