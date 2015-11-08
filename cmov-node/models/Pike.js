@@ -14,15 +14,35 @@ module.exports = function(sequelize, DataTypes) {
             },
             picture: {
                 type: DataTypes.STRING
+            },
+            token: {
+                type: DataTypes.TEXT,
+                unique: true
+            },
+            expireTime: {
+                type: DataTypes.INTEGER
             }
         },
         {
             classMethods: {
                 associate: function (models) {
                 },
-                addNewPike: function(pikeModel, email) {
-                    return pikeModel.create({
-                        email: email
+                addNewPike: function(pikeModel, email, name, authToken, expire) {
+                    return pikeModel.findOrCreate({
+                        where: {
+                            email: email
+                        }, defaults: {
+                            name: name,
+                            token: authToken,
+                            expireTime: expire
+                        }
+                    });
+                },
+                findPikeWithToken: function(userModel, token) {
+                    return userModel.findOne({
+                        where: {
+                            token: token
+                        }
                     });
                 }
             },

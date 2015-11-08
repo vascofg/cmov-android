@@ -1,5 +1,5 @@
 //var Ticket = require('Ticket.js');
-module.exports = function(sequelize, DataTypes) {
+module.exports = function (sequelize, DataTypes) {
     var User = sequelize.define(
         'User',
         {
@@ -14,6 +14,22 @@ module.exports = function(sequelize, DataTypes) {
             },
             picture: {
                 type: DataTypes.STRING
+            },
+            token: {
+                type: DataTypes.TEXT,
+                unique: true
+            },
+            expireTime: {
+                type: DataTypes.INTEGER
+            },
+            card: {
+                type: DataTypes.STRING
+            },
+            cvv: {
+                type: DataTypes.STRING
+            },
+            cardDate: {
+                type: DataTypes.STRING
             }
         },
         {
@@ -21,17 +37,47 @@ module.exports = function(sequelize, DataTypes) {
                 associate: function (models) {
                     User.hasMany(models.Ticket);
                 },
-                findAllUsers: function(userModel) {
+                findAllUsers: function (userModel) {
                     return userModel.findAll({
                         where: {
                             email: "aa@aa.aa"
                         }
                     });
                 },
-                addNewUser: function(userModel, email) {
-                    return userModel.create({
-                        email: email
+                addNewUser: function (userModel, email, name, authToken, expire) {
+                    return userModel.findOrCreate({
+                        where: {
+                            email: email
+                        }, defaults: {
+                            name: name,
+                            token: authToken,
+                            expireTime: expire
+                        }
                     });
+                },
+                findUserWithToken: function (userModel, token) {
+                    return userModel.findOne({
+                        where: {
+                            token: token
+                        }
+                    });
+                },
+                findUserWithEmail: function (userModel, email) {
+                    return userModel.findOne({
+                        where: {
+                            email: email
+                        }
+                    });
+                },
+                updateCardInfoForUserWithEmail: function (userModel, user, card, cvv, date) {
+                    if (user) {
+                        console.log(typeof user);
+                        return user.update({
+                            card: card,
+                            cvv: cvv,
+                            cardDate: date
+                        });
+                    }
                 }
             },
             tableName: 'user',

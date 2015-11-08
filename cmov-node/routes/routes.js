@@ -9,18 +9,51 @@ module.exports = [
         }
     },
     {
-        method: 'GET',
-        path: '/',
+        method: 'POST',
+        path: '/ticket',
         handler: function (request, reply) {
-            handlers.handler1(request, reply);
+            handlers.getTicketHandler(request, reply);
         }
     },
-
     {
         method: 'GET',
-        path: '/{name}',
+        path: '/tickets',
         handler: function (request, reply) {
-            handlers.handler2(request, reply);
+            handlers.ticketsHandler(request, reply);
+        },
+        config: {
+            auth: {
+                strategy: 'userAuth'
+                //scope: 'user' // or [ 'user', 'admin' ]
+            }
+        }
+    },
+    {
+        method: 'GET',
+        path: '/timetable',
+        handler: function (request, reply) {
+            handlers.timetableHandler(request, reply);
+        }
+    },
+    {
+        method: 'PATCH',
+        path: '/update',
+        handler: function (request, reply) {
+            handlers.updateHandler(request, reply);
+        },
+        config: {
+            auth: {
+                strategy: 'userAuth'
+                //scope: 'user' // or [ 'user', 'admin' ]
+            }
         }
     }
+
+    //{
+    //    method: 'GET',
+    //    path: '/{name}',
+    //    handler: function (request, reply) {
+    //        handlers.handler2(request, reply);
+    //    }
+    //}
 ];
