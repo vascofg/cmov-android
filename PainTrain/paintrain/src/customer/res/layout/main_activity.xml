@@ -26,4 +26,12 @@
         android:layout_below="@id/buy_tickets_button_main"
         android:text="@string/timetable"
         android:onClick="launchTimetable"/>
+
+    <Button
+        android:id="@+id/nfc_button_main"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/timetable_button_main"
+        android:text="@string/nfc"
+        android:onClick="launchNFC"/>
 </LinearLayout>

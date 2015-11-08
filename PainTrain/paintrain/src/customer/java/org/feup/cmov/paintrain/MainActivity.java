@@ -26,4 +26,8 @@ public class MainActivity extends Activity {
     public void launchTimetable(View view) {
         startActivity(new Intent(this, TimetableActivity.class));
     }
+
+    public void launchNFC(View view) {
+        startActivity(new Intent(this, NFCSendActivity.class));
+    }
 }

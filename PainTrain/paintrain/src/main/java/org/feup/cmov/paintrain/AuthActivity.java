@@ -11,6 +11,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.android.volley.*;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.common.ConnectionResult;
@@ -19,6 +22,8 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 
@@ -216,6 +221,35 @@ public class AuthActivity extends Activity implements
         return super.onOptionsItemSelected(item);
     }
 
+    public void authWithServer(String token) {
+        RequestQueue queue = Volley.newRequestQueue(this);
+        String url = getResources().getString(R.string.base_url)+"/auth";
+        JSONObject jo = new JSONObject();
+
+        try {
+            jo.put("googleCredentials", token);
+            jo.put("pike", false);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, jo, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject jsonObject) {
+                Toast.makeText(getBaseContext(),"Success authing with server!",Toast.LENGTH_LONG).show();
+                Log.d(TAG,jsonObject.toString());
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getBaseContext(),"Error authing with server",Toast.LENGTH_LONG).show();
+                Log.e(TAG, "VOLLEY: " + error.toString());
+            }
+        });
+
+        queue.add(jsonObjectRequest);
+    }
+
     private class GetIdTokenTask extends AsyncTask<String, Void, String> {
 
         private static final String SERVER_CLIENT_ID = "286336060185-fnqe7hokq83dbec4oh14vnvqama1aamn.apps.googleusercontent.com";
@@ -246,6 +280,7 @@ public class AuthActivity extends Activity implements
             Log.i(TAG, "ID token: " + result);
             if (result != null) {
                 mToken.setText(result);
+                authWithServer(result);
             } else {
                 mToken.setText("Error getting token!");
             }
