@@ -2,4 +2,6 @@
     <string name="app_name">Pain Train - Pike</string>
 
     <string name="role">Pike</string>
+
+    <string name="qrcode">QR Code</string>
 </resources>
