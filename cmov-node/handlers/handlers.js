@@ -22,7 +22,7 @@ exports.authHandler = function (request, reply) {
 
             var bodyJson = JSON.parse(body);
             console.log('BODY: ' + body);
-            //console.log(bodyJson.aud);
+            console.log(res.statusCode);
             if (res.statusCode == 200) {
                 if (bodyJson.aud == "407408718192.apps.googleusercontent.com") {
                     //console.log("valido");
@@ -38,9 +38,9 @@ exports.authHandler = function (request, reply) {
 
                     if (pike) {
                         models.Pike.addNewPike(models.Pike, email).then(function (user) {
-                            console.log(user);
-                            return reply("Ok").code(200);
-                        })
+                                console.log(user);
+                                return reply("Ok").code(200);
+                            })
                             .catch(function (error) {
                                 console.log(error);
                                 return reply("Error")
@@ -48,10 +48,10 @@ exports.authHandler = function (request, reply) {
                             });
                     } else {
                         models.User.addNewUser(models.User, email).then(function (user) {
-                            console.log(user);
-                            return reply("Ok")
-                                .code(200);
-                        })
+                                console.log(user);
+                                return reply("Ok")
+                                    .code(200);
+                            })
                             .catch(function (error) {
                                 console.log(error);
                                 return reply("Error")
@@ -61,6 +61,8 @@ exports.authHandler = function (request, reply) {
 
 
                 }
+            } else if (res.statusCode == 400) {
+                return reply("Unauthorized").code(403);
             }
         });
     });
