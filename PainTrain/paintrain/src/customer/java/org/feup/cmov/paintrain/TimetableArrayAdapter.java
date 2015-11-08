@@ -19,12 +19,10 @@ import java.util.List;
 public class TimetableArrayAdapter extends ArrayAdapter<JSONObject> {
 
     private final Context context;
-    private final List<JSONObject> values;
 
     public TimetableArrayAdapter(Context context, List<JSONObject> values) {
         super(context, -1, values);
         this.context = context;
-        this.values = values;
     }
 
     @Override

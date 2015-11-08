@@ -31,4 +31,11 @@
         android:layout_height="wrap_content"
         android:text="@string/nfc"
         android:onClick="launchNFC"/>
+
+    <Button
+        android:id="@+id/qrcode_button_main"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/qrcode"
+        android:onClick="showQRCode"/>
 </LinearLayout>

@@ -2,6 +2,7 @@ package org.feup.cmov.paintrain;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 
@@ -29,5 +30,24 @@ public class MainActivity extends Activity {
 
     public void launchNFC(View view) {
         startActivity(new Intent(this, NFCSendActivity.class));
+    }
+
+    public void showQRCode(View view) {
+        try {
+
+            Intent intent = new Intent("com.google.zxing.client.android.ENCODE");
+            intent.putExtra("ENCODE_DATA", "The Pain Train!");
+            intent.putExtra("ENCODE_TYPE", "TEXT_TYPE");
+            intent.putExtra("ENCODE_SHOW_CONTENTS", false);
+
+            startActivityForResult(intent, 0);
+
+        } catch (Exception e) {
+
+            Uri marketUri = Uri.parse("market://details?id=com.google.zxing.client.android");
+            Intent marketIntent = new Intent(Intent.ACTION_VIEW,marketUri);
+            startActivity(marketIntent);
+
+        }
     }
 }

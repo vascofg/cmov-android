@@ -11,6 +11,7 @@
     <string name="label_to_stations">To</string>
 
     <string name="auth">Authenticate</string>
+    <string name="qrcode">QR Code</string>
 
     <string name="base_url">http://cmov-trains.herokuapp.com</string>
 
