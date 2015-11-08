@@ -1,4 +1,12 @@
 var https = require('https');
+var fs = require('fs');
+var ursa = require('ursa');
+
+var privKeyNode = ursa.createPrivateKey(fs.readFileSync('./nodeKeys/privkey.pem'));
+var pubkeyAndroid = ursa.createPublicKey(fs.readFileSync('./androidKeys/pubkey.pem'));
+
+//var privkeyAndroid = ursa.createPrivateKey(fs.readFileSync('./androidKeys/privkey.pem'));
+//var pubkeyNode = ursa.createPublicKey(fs.readFileSync('./nodeKeys/pubkey.pem'));
 
 exports.ticketsHandler = function (request, reply) {
     var user = request.auth.credentials;
@@ -26,43 +34,43 @@ exports.authHandler = function (request, reply) {
             //console.log(res.statusCode);
             if (res.statusCode == 200) {
                 //if (bodyJson.aud == "407408718192.apps.googleusercontent.com") {
-                    //if (bodyJson.aud == "286336060185-fnqe7hokq83dbec4oh14vnvqama1aamn.apps.googleusercontent.com") {
-                    //console.log("valido");
+                //if (bodyJson.aud == "286336060185-fnqe7hokq83dbec4oh14vnvqama1aamn.apps.googleusercontent.com") {
+                //console.log("valido");
 
-                    var email = bodyJson.email;
-                    var name = bodyJson.name;
-                    var authToken = credentials;
-                    var expire = bodyJson.exp;
+                var email = bodyJson.email;
+                var name = bodyJson.name;
+                var authToken = credentials;
+                var expire = bodyJson.exp;
 
-                    var pike = (request.payload.pike.toLowerCase() === "true");
+                var pike = (request.payload.pike.toLowerCase() === "true");
 
-                    //console.log(email);
-                    //console.log(pike);
+                //console.log(email);
+                //console.log(pike);
 
-                    var models = request.server.plugins['hapi-sequelized'].db.sequelize.models;
+                var models = request.server.plugins['hapi-sequelized'].db.sequelize.models;
 
-                    if (pike) {
-                        models.Pike.addNewPike(models.Pike, email, name, authToken, expire).then(function (user) {
-                                //console.log(user);
-                                return reply("Ok").code(200);
-                            })
-                            .catch(function (error) {
-                                console.log(error);
-                                return reply("Error")
-                                    .code(400);
-                            });
-                    } else {
-                        models.User.addNewUser(models.User, email, name, authToken, expire).then(function (user) {
-                                //console.log(user);
-                                return reply("Ok")
-                                    .code(200);
-                            })
-                            .catch(function (error) {
-                                console.log(error);
-                                return reply("Error")
-                                    .code(400);
-                            });
-                    }
+                if (pike) {
+                    models.Pike.addNewPike(models.Pike, email, name, authToken, expire).then(function (user) {
+                            //console.log(user);
+                            return reply("Ok").code(200);
+                        })
+                        .catch(function (error) {
+                            console.log(error);
+                            return reply("Error")
+                                .code(400);
+                        });
+                } else {
+                    models.User.addNewUser(models.User, email, name, authToken, expire).then(function (user) {
+                            //console.log(user);
+                            return reply("Ok")
+                                .code(200);
+                        })
+                        .catch(function (error) {
+                            console.log(error);
+                            return reply("Error")
+                                .code(400);
+                        });
+                }
 
 
                 //}
@@ -115,7 +123,7 @@ exports.timetableHandler = function (request, reply) {
 
     var tripModel = request.server.plugins['hapi-sequelized'].db.sequelize.models.Trip;
 
-    tripModel.findAll().then(function(trips) {
+    tripModel.findAll().then(function (trips) {
         //console.log(trips);
         //console.log(trips[0].times.A);
 
@@ -139,7 +147,36 @@ exports.timetableHandler = function (request, reply) {
         }
 
 
-
         return reply(times).code(200);
     });
+};
+
+exports.getTicketHandler = function (request, reply) {
+
+    var msg = "IT’S A SECRET TO EVERYBODY.";
+
+    console.log('Encrypt with Alice Public; Sign with Bob Private');
+    var enc = pubkeyAndroid.encrypt(msg, 'utf8', 'base64');
+    var sig = privKeyNode.hashAndSign('sha256', msg, 'utf8', 'base64');
+    console.log('encrypted', enc, '\n');
+    console.log('signed', sig, '\n');
+
+
+
+
+
+
+    //console.log('Decrypt with Alice Private; Verify with Bob Public');
+    //var rcv = privkeyAndroid.decrypt(enc, 'base64', 'utf8');
+    //if (msg !== rcv) {
+    //    throw new Error("invalid decrypt");
+    //}
+    //rcv = new Buffer(rcv).toString('base64');
+    //if (!pubkeyNode.hashAndVerify('sha256', rcv, sig, 'base64')) {
+    //    throw new Error("invalid signature");
+    //}
+    //console.log('decrypted', msg, '\n');
+
+
+    //reply("FIXE");
 };

@@ -9,6 +9,13 @@ module.exports = [
         }
     },
     {
+        method: 'POST',
+        path: '/ticket',
+        handler: function (request, reply) {
+            handlers.getTicketHandler(request, reply);
+        }
+    },
+    {
         method: 'GET',
         path: '/tickets',
         handler: function (request, reply) {
