@@ -5,6 +5,8 @@ var ursa = require('ursa');
 var privKeyNode = ursa.createPrivateKey(fs.readFileSync('./nodeKeys/privkey.pem'));
 var pubkeyAndroid = ursa.createPublicKey(fs.readFileSync('./androidKeys/pubkey.pem'));
 
+var ticketPrice = 1;
+
 //var privkeyAndroid = ursa.createPrivateKey(fs.readFileSync('./androidKeys/privkey.pem'));
 //var pubkeyNode = ursa.createPublicKey(fs.readFileSync('./nodeKeys/pubkey.pem'));
 
@@ -134,14 +136,16 @@ exports.timetableHandler = function (request, reply) {
                 //console.log(trip.times);
                 var returnTrip = {};
                 returnTrip.id = trip.id;
-                //returnTrip.times = trip.times;
+                returnTrip.arrival = trip.arrival;
+                returnTrip.departure = trip.departure;
+                returnTrip.times = trip.times;
 
-                var tripsArray = []
-                for (var station in trip.times) {
-                    tripsArray.push({station: station, time: trip.times[station]});
-                }
+                //var tripsArray = []
+                //for (var station in trip.times) {
+                //    tripsArray.push({station: station, time: trip.times[station]});
+                //}
 
-                returnTrip.trips = tripsArray;
+                //returnTrip.trips = tripsArray;
                 times.push(returnTrip);
             });
         }
@@ -153,17 +157,59 @@ exports.timetableHandler = function (request, reply) {
 
 exports.getTicketHandler = function (request, reply) {
 
-    var msg = "IT’S A SECRET TO EVERYBODY.";
+    var tripModel = request.server.plugins['hapi-sequelized'].db.sequelize.models.Trip;
 
-    console.log('Encrypt with Alice Public; Sign with Bob Private');
-    var enc = pubkeyAndroid.encrypt(msg, 'utf8', 'base64');
-    var sig = privKeyNode.hashAndSign('sha256', msg, 'utf8', 'base64');
-    console.log('encrypted', enc, '\n');
-    console.log('signed', sig, '\n');
+    var initialStation = request.payload.initialStation;
+    var finalStation = request.payload.finalStation;
+    var tripId = request.payload.trip;
+
+    //console.log(initialStation);
+    //console.log(finalStation);
+    //console.log(tripId);
+
+    var lineA = ['A', 'A1', 'Central', 'B1', 'B'];
+    var lineC = ['Central', 'C1', 'C'];
+
+    var indexInitial = lineA.indexOf(initialStation);
+    var initialInLineA = true;
+    if (indexInitial < 0) {
+        indexInitial = lineC.indexOf(initialStation);
+        initialInLineA = false;
+    }
+
+    var centralIndex = 2;
+    var indexFinal = lineA.indexOf(finalStation);
+    var finalInLineA = true;
+    if (indexFinal < 0) {
+        indexFinal = lineC.indexOf(finalStation);
+        finalInLineA = false;
+    }
+
+    var nStations = 0;
+    if ((initialInLineA && finalInLineA) || (!initialInLineA && !finalInLineA)) {
+        nStations = indexFinal - indexInitial;
+    } else {
+        if (initialInLineA) {
+            nStations = Math.abs(indexInitial-centralIndex) + indexFinal;
+        } else {
+            nStations = indexInitial + Math.abs(indexFinal-centralIndex);
+        }
+    }
+
+    var ticketCost = nStations * ticketPrice;
+
+    tripModel.findTrip(tripModel, initialStation).then(function (stations) {
+        console.log(stations);
+    })
+
+    reply(nStations);
 
 
-
-
+    //console.log('Encrypt with Alice Public; Sign with Bob Private');
+    //var enc = pubkeyAndroid.encrypt(msg, 'utf8', 'base64');
+    //var sig = privKeyNode.hashAndSign('sha256', msg, 'utf8', 'base64');
+    //console.log('encrypted', enc, '\n');
+    //console.log('signed', sig, '\n');
 
 
     //console.log('Decrypt with Alice Private; Verify with Bob Public');
