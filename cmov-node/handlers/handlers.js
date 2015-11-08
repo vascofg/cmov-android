@@ -25,7 +25,7 @@ exports.authHandler = function (request, reply) {
             //console.log('BODY: ' + body);
             //console.log(res.statusCode);
             if (res.statusCode == 200) {
-                if (bodyJson.aud == "407408718192.apps.googleusercontent.com") {
+                //if (bodyJson.aud == "407408718192.apps.googleusercontent.com") {
                     //if (bodyJson.aud == "286336060185-fnqe7hokq83dbec4oh14vnvqama1aamn.apps.googleusercontent.com") {
                     //console.log("valido");
 
@@ -65,7 +65,7 @@ exports.authHandler = function (request, reply) {
                     }
 
 
-                }
+                //}
             } else if (res.statusCode == 400) {
                 return reply("Unauthorized").code(403);
             }
