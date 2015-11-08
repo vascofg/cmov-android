@@ -124,7 +124,10 @@ exports.timetableHandler = function (request, reply) {
         if (trips) {
             trips.forEach(function (trip) {
                 //console.log(trip.times);
-                times.push(trip.times);
+                var returnTrip = {};
+                returnTrip.id = trip.id;
+                returnTrip.times = trip.times;
+                times.push(returnTrip);
             });
         }
 

@@ -23,6 +23,9 @@ module.exports = function(sequelize, DataTypes) {
         },
         {
             classMethods: {
+                associate: function (models) {
+                    Trip.hasMany(models.Ticket);
+                },
                 addTrips: function (tripModel) {
                     tripModel.bulkCreate([
                         {id:1,departure:'A', arrival:'B', times:{
