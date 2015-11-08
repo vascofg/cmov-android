@@ -1,29 +1,23 @@
 package org.feup.cmov.paintrain;
 
+import android.content.Context;
+import android.net.Uri;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.*;
+import android.widget.SimpleAdapter.ViewBinder;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import android.content.Context;
-import android.net.Uri;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.Filter;
-import android.widget.Filterable;
-import android.widget.ImageView;
-import android.widget.SimpleAdapter;
-import android.widget.SimpleAdapter.ViewBinder;
-import android.widget.TextView;
-
 /**
  * An easy adapter to map JSON data to views defined in an XML layout. Basically a wrapper around
- * {@link android.widget.SimpleAdapter} that maps data from a {@link org.json.JSONArray} instance.
- * 
+ * {@link SimpleAdapter} that maps data from a {@link JSONArray} instance.
+ *
  * @author jgilfelt
  */
 public class JSONArrayAdapter extends BaseAdapter implements Filterable {
@@ -36,27 +30,27 @@ public class JSONArrayAdapter extends BaseAdapter implements Filterable {
      * Constructor
      *
      * @param context The context where the View associated with this SimpleAdapter is running
-     * 
+     *
      * @param data A JSONArray of JSONObjects. Each object in the array corresponds to one row in the list. The
      *        JSONObjects contain the data for each row, and should include all the entries specified in
      *        "from"
-     *        
+     *
      * @param resource Resource identifier of a view layout that defines the views for this list
      *        item. The layout file should include at least those named views defined in "to"
-     *        
+     *
      * @param from A list of field names that will be mapped from the JSONObject associated with each
      *        item.
-     *        
+     *
      * @param to The views that should display column in the "from" parameter. These should all be
      *        TextViews. The first N views in this list are given the values of the first N columns
      *        in the from parameter.
-     *        
+     *
      * @param idField The field name which contains a numeric identifier for each JSONObject.
      */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public JSONArrayAdapter(Context context,
 			JSONArray data,
-			int resource, 
+			int resource,
 			String[] from,
 			int[] to,
 			String idField) {
@@ -66,55 +60,55 @@ public class JSONArrayAdapter extends BaseAdapter implements Filterable {
 		List simpleData = jsonToMapList(data, from);
 		internalAdapter = new InternalSimpleAdapter(context, simpleData, resource, from, to);
 	}
-	
+
 	/**
      * Constructor
      *
      * @param context The context where the View associated with this SimpleAdapter is running
-     * 
+     *
      * @param data A JSONArray of JSONObjects. Each object in the array corresponds to one row in the list. The
      *        JSONObjects contain the data for each row, and should include all the entries specified in
      *        "from"
-     *        
+     *
      * @param resource Resource identifier of a view layout that defines the views for this list
      *        item. The layout file should include at least those named views defined in "to"
-     *        
+     *
      * @param from A list of field names that will be mapped from the JSONObject associated with each
      *        item.
-     *        
+     *
      * @param to The views that should display column in the "from" parameter. These should all be
      *        TextViews. The first N views in this list are given the values of the first N columns
      *        in the from parameter.
      */
 	public JSONArrayAdapter(Context context,
 			JSONArray data,
-			int resource, 
+			int resource,
 			String[] from,
 			int[] to) {
 		this(context, data, resource, from, to, null);
 	}
-	
+
 	@SuppressWarnings("rawtypes")
 	private List jsonToMapList(JSONArray data, String[] fields) {
-		
+
 		List<Map> listData = new ArrayList<Map>();
         HashMap<String, String> item;
-		
+
 		for (int i = 0; i < data.length(); i++) {
 			JSONObject o = data.optJSONObject(i);
 			if (o != null) {
-				item = new HashMap<String, String>();	
+				item = new HashMap<String, String>();
 				for (int j = 0; j < fields.length; j++) {
 					String fname = fields[j];
-					item.put(fname, optString(o, fname));	
+					item.put(fname, optString(o, fname));
 				}
 				listData.add(item);
-			}	
+			}
 		}
 		return listData;
-		
+
 	}
-	
+
 	private String optString(JSONObject o, String key) {
 		//iterate over child json keys if we need to
 		String[] keys = key.split("\\.");
@@ -126,9 +120,9 @@ public class JSONArrayAdapter extends BaseAdapter implements Filterable {
 			return null;
 		} else {
 			return s;
-		}	
+		}
 	}
-	
+
 	public SimpleAdapter unwrap() {
 		return internalAdapter;
 	}
@@ -157,10 +151,10 @@ public class JSONArrayAdapter extends BaseAdapter implements Filterable {
 
 	/**
 	 * Returns the {@link ViewBinder} used to bind data to views.
-	 * 
+	 *
 	 * @return a ViewBinder or null if the binder does not exist
-	 * 
-	 * @see #setViewBinder(android.widget.SimpleAdapter.ViewBinder)
+	 *
+	 * @see #setViewBinder(ViewBinder)
 	 */
 	public ViewBinder getViewBinder() {
 		return internalAdapter.getViewBinder();

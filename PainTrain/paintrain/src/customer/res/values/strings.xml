@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Pain Train</string>
+
+    <string name="role">Customer</string>
+
+    <string name="nfc">NFC</string>
+</resources>

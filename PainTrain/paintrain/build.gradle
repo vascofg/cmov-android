@@ -35,6 +35,18 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    productFlavors {
+        customer {
+            applicationId
+            "org.feup.cmov.paintrain.customer"
+            versionName "1.0-customer"
+        }
+        pike {
+            applicationId
+            "org.feup.cmov.paintrain.pike"
+            versionName "1.0-pike"
+        }
+    }
 }
 
 dependencies {

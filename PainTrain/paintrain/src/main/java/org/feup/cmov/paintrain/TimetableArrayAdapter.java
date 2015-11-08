@@ -1,12 +1,7 @@
 package org.feup.cmov.paintrain;
 
 import android.content.Context;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.TextView;
-import org.w3c.dom.Text;
 
 /**
  * Created by vascofg on 04-11-2015.
