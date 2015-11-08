@@ -36,11 +36,14 @@ module.exports = function(sequelize, DataTypes) {
                     });
                 },
                 addNewUser: function(userModel, email, name, authToken, expire) {
-                    return userModel.create({
-                        email: email,
-                        name: name,
-                        token: authToken,
-                        expireTime: expire
+                    return userModel.findOrCreate({
+                        where: {
+                            email: email
+                        }, defaults: {
+                            name: name,
+                            token: authToken,
+                            expireTime: expire
+                        }
                     });
                 },
                 findUserWithToken: function(userModel, token) {

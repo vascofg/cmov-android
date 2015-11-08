@@ -28,11 +28,14 @@ module.exports = function(sequelize, DataTypes) {
                 associate: function (models) {
                 },
                 addNewPike: function(pikeModel, email, name, authToken, expire) {
-                    return pikeModel.create({
-                        email: email,
-                        name: name,
-                        token: authToken,
-                        expireTime: expire
+                    return pikeModel.findOrCreate({
+                        where: {
+                            email: email
+                        }, defaults: {
+                            name: name,
+                            token: authToken,
+                            expireTime: expire
+                        }
                     });
                 },
                 findPikeWithToken: function(userModel, token) {
