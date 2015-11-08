@@ -26,9 +26,7 @@ var manifest = {
             }
         },
         {
-            'hapi-auth-bearer-simple' : {
-
-            }
+            'hapi-auth-bearer-simple': {}
         }
         //{
         //    'bell': {
@@ -42,19 +40,54 @@ var options = {
     relativeTo: __dirname
 };
 
-var validateFunction = function (token, callback) {
+var validateUser = function (token, request, callback) {
 
-    // Use a real strategy here to check if the token is valid
-    //if (token === 'abc456789') {
-    //    callback(null, true, userCredentials);
-    //}
-    //else {
-    //    callback(null, false, userCredentials);
-    //}
+    var models = request.server.plugins['hapi-sequelized'].db.sequelize.models;
 
-    console.log("validate");
-    console.log(token);
-    callback(null, false, {ok:'ok'});
+    models.User.findUserWithToken(models.User, token).then(function (user) {
+
+            var date = Math.floor(Date.now() / 1000);
+
+            //console.log(user.dataValues);
+            if (date <= user.expireTime) {
+                console.log("Valid token");
+                callback(null, true, user.dataValues);
+            } else {
+                console.log("INVALID TOKEN");
+                callback({Error: "Invalid token"}, false, null);
+            }
+        })
+        .catch(function (error) {
+            console.log(error);
+            console.log("ERROR IN DATABASE");
+
+            callback({Error: "Internal Error - user not found"}, false, null);
+        });
+};
+
+var validatePike = function (token, request, callback) {
+
+    var models = request.server.plugins['hapi-sequelized'].db.sequelize.models;
+
+    models.Pike.findPikeWithToken(models.Pike, token).then(function (user) {
+
+            var date = Math.floor(Date.now() / 1000);
+
+            //console.log(user.dataValues);
+            if (date <= user.expireTime) {
+                console.log("Valid token");
+                callback(null, true, user.dataValues);
+            } else {
+                console.log("INVALID TOKEN");
+                callback({Error: "Invalid token"}, false, null);
+            }
+        })
+        .catch(function (error) {
+            console.log(error);
+            console.log("ERROR IN DATABASE");
+
+            callback({Error: "Internal Error - user not found"}, false, null);
+        });
 };
 
 Glue.compose(manifest, options, function (err, server) {
@@ -65,12 +98,13 @@ Glue.compose(manifest, options, function (err, server) {
 
     console.log('syncing');
     var db = server.plugins['hapi-sequelized'].db;
-    db.sequelize.sync({ force: true }).then(function () {
+    db.sequelize.sync({force: true}).then(function () {
         console.log('models synced');
     });
 
     server.auth.strategy('userAuth', 'bearerAuth', {
-        validateFunction: validateFunction
+        validateFunction: validateUser,
+        exposeRequest: true
     });
 
     var routes = require('./routes/routes.js');

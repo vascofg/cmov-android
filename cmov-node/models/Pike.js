@@ -34,6 +34,13 @@ module.exports = function(sequelize, DataTypes) {
                         token: authToken,
                         expireTime: expire
                     });
+                },
+                findPikeWithToken: function(userModel, token) {
+                    return userModel.findOne({
+                        where: {
+                            token: token
+                        }
+                    });
                 }
             },
             tableName: 'pike',
