@@ -118,7 +118,7 @@ Glue.compose(manifest, options, function (err, server) {
 
     server.route(routes);
 
-    server.timeout = 100000;
+    //server.timeout = 100000;
 
     server.start(function () {
 
