@@ -12,6 +12,7 @@
   "dependencies": {
     "glue": "^2.4.0",
     "hapi": "^11.0.2",
+    "hapi-auth-bearer-simple": "^3.0.1",
     "hapi-sequelized": "^2.2.2",
     "mysql": "^2.9.0",
     "sequelize": "^3.12.2"

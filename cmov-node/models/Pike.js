@@ -14,15 +14,25 @@ module.exports = function(sequelize, DataTypes) {
             },
             picture: {
                 type: DataTypes.STRING
+            },
+            token: {
+                type: DataTypes.STRING(1000),
+                unique: true
+            },
+            expireTime: {
+                type: DataTypes.INTEGER
             }
         },
         {
             classMethods: {
                 associate: function (models) {
                 },
-                addNewPike: function(pikeModel, email) {
+                addNewPike: function(pikeModel, email, name, authToken, expire) {
                     return pikeModel.create({
-                        email: email
+                        email: email,
+                        name: name,
+                        token: authToken,
+                        expireTime: expire
                     });
                 }
             },

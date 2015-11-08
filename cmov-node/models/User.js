@@ -14,6 +14,13 @@ module.exports = function(sequelize, DataTypes) {
             },
             picture: {
                 type: DataTypes.STRING
+            },
+            token: {
+                type: DataTypes.STRING(1000),
+                unique: true
+            },
+            expireTime: {
+                type: DataTypes.INTEGER
             }
         },
         {
@@ -28,9 +35,12 @@ module.exports = function(sequelize, DataTypes) {
                         }
                     });
                 },
-                addNewUser: function(userModel, email) {
+                addNewUser: function(userModel, email, name, authToken, expire) {
                     return userModel.create({
-                        email: email
+                        email: email,
+                        name: name,
+                        token: authToken,
+                        expireTime: expire
                     });
                 }
             },

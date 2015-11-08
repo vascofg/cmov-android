@@ -24,6 +24,11 @@ var manifest = {
                     }
                 }
             }
+        },
+        {
+            'hapi-auth-bearer-simple' : {
+
+            }
         }
         //{
         //    'bell': {
@@ -37,6 +42,21 @@ var options = {
     relativeTo: __dirname
 };
 
+var validateFunction = function (token, callback) {
+
+    // Use a real strategy here to check if the token is valid
+    //if (token === 'abc456789') {
+    //    callback(null, true, userCredentials);
+    //}
+    //else {
+    //    callback(null, false, userCredentials);
+    //}
+
+    console.log("validate");
+    console.log(token);
+    callback(null, false, {ok:'ok'});
+};
+
 Glue.compose(manifest, options, function (err, server) {
 
     if (err) {
@@ -47,6 +67,10 @@ Glue.compose(manifest, options, function (err, server) {
     var db = server.plugins['hapi-sequelized'].db;
     db.sequelize.sync({ force: true }).then(function () {
         console.log('models synced');
+    });
+
+    server.auth.strategy('userAuth', 'bearerAuth', {
+        validateFunction: validateFunction
     });
 
     var routes = require('./routes/routes.js');

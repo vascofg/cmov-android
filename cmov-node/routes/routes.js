@@ -10,17 +10,24 @@ module.exports = [
     },
     {
         method: 'GET',
-        path: '/',
+        path: '/tickets',
         handler: function (request, reply) {
-            handlers.handler1(request, reply);
-        }
-    },
-
-    {
-        method: 'GET',
-        path: '/{name}',
-        handler: function (request, reply) {
-            handlers.handler2(request, reply);
+            console.log("handler");
+            handlers.ticketsHandler(request, reply);
+        },
+        config: {
+            auth: {
+                strategy: 'userAuth'
+                //scope: 'user' // or [ 'user', 'admin' ]
+            }
         }
     }
+
+    //{
+    //    method: 'GET',
+    //    path: '/{name}',
+    //    handler: function (request, reply) {
+    //        handlers.handler2(request, reply);
+    //    }
+    //}
 ];

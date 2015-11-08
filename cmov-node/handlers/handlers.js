@@ -1,6 +1,6 @@
 var https = require('https');
 
-exports.handler1 = function (request, reply) {
+exports.ticketsHandler = function (request, reply) {
     reply('Hello, world!');
 };
 
@@ -28,6 +28,9 @@ exports.authHandler = function (request, reply) {
                     //console.log("valido");
 
                     var email = bodyJson.email;
+                    var name = bodyJson.name;
+                    var authToken = credentials;
+                    var expire = bodyJson.exp;
 
                     var pike = (request.payload.pike.toLowerCase() === "true");
 
@@ -37,7 +40,7 @@ exports.authHandler = function (request, reply) {
                     var models = request.server.plugins['hapi-sequelized'].db.sequelize.models;
 
                     if (pike) {
-                        models.Pike.addNewPike(models.Pike, email).then(function (user) {
+                        models.Pike.addNewPike(models.Pike, email, name, authToken, expire).then(function (user) {
                                 console.log(user);
                                 return reply("Ok").code(200);
                             })
@@ -47,7 +50,7 @@ exports.authHandler = function (request, reply) {
                                     .code(400);
                             });
                     } else {
-                        models.User.addNewUser(models.User, email).then(function (user) {
+                        models.User.addNewUser(models.User, email, name, authToken, expire).then(function (user) {
                                 console.log(user);
                                 return reply("Ok")
                                     .code(200);
