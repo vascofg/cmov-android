@@ -2,7 +2,7 @@ module.exports = function(sequelize, DataTypes) {
     var Ticket = sequelize.define(
         'Ticket',
         {
-            id: {
+            ticketEnc: {
                 type: DataTypes.STRING,
                 unique: true,
                 allowNull: false,
@@ -14,6 +14,11 @@ module.exports = function(sequelize, DataTypes) {
                 associate: function (models) {
                     Ticket.belongsTo(models.User);
                     Ticket.belongsTo(models.Trip);
+                },
+                createTicket: function (ticketModel, ticket) {
+                    return ticketModel.create({
+                        ticketEnc: ticket
+                    });
                 }
             },
             tableName: 'ticket',

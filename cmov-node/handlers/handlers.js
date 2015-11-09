@@ -4,6 +4,7 @@ var ursa = require('ursa');
 
 var privKeyNode = ursa.createPrivateKey(fs.readFileSync('./nodeKeys/privkey.pem'));
 var pubkeyAndroid = ursa.createPublicKey(fs.readFileSync('./androidKeys/pubkey.pem'));
+var privkeyAndroid = ursa.createPrivateKey(fs.readFileSync('./androidKeys/privkey.pem'));
 
 var ticketPrice = 1;
 
@@ -371,12 +372,9 @@ var createMultipleTickets = function (request, reply, currentTrip, currentStatio
 
     var firstTicket, secondTicket;
     if (currentTrip != null) {
-        var ticket = {};
 
-        ticket.trip = currentTrip;
-        ticket.firstStation = currentStationArray[0];
-        ticket.lastStation = currentStationArray[1];
-        ticket.tripCost = tripCost;
+        var ticket = "id:" + currentTrip.id + "--email:" + request.auth.credentials.email + "--firstStation:" + currentStationArray[0].station +
+            "--time:" + currentStationArray[0].time + "--price:" + tripCost + "--random:" + Math.random();
 
 
         //console.log('Encrypt with Alice Public; Sign with Bob Private');
@@ -387,12 +385,9 @@ var createMultipleTickets = function (request, reply, currentTrip, currentStatio
     }
 
     if (secondTrip != null) {
-        var ticket = {};
 
-        ticket.trip = currentTrip;
-        ticket.firstStation = secondStationArray[0];
-        ticket.lastStation = secondStationArray[1];
-        ticket.tripCost = tripCost;
+        var ticket = "id:" + secondTrip.id + "--email:" + request.auth.credentials.email + "--firstStation:" + secondStationArray[0].station +
+            "--time:" + secondStationArray[0].time + "--price:" + tripCost + "--random:" + Math.random();
 
 
         //console.log('Encrypt with Alice Public; Sign with Bob Private');
@@ -422,12 +417,13 @@ var createMultipleTickets = function (request, reply, currentTrip, currentStatio
 var createTicket = function (request, reply, currentTrip, firstStation, lastStation, tripCost) {
 
     if (currentTrip != null) {
-        var ticket = {};
 
-        ticket.trip = currentTrip;
-        ticket.firstStation = firstStation;
-        ticket.lastStation = lastStation;
-        ticket.tripCost = tripCost;
+        var ticket = "id:" + currentTrip.id + "--email:" + request.auth.credentials.email + "--firstStation:" + firstStation.station +
+            "--time:" + firstStation.time + "--price:" + tripCost + "--random:" + Math.random();
+        //ticket.trip = currentTrip;
+        //ticket.firstStation = firstStation;
+        //ticket.lastStation = lastStation;
+        //ticket.tripCost = tripCost;
 
 
         //console.log('Encrypt with Alice Public; Sign with Bob Private');
@@ -435,6 +431,12 @@ var createTicket = function (request, reply, currentTrip, firstStation, lastStat
         //var sigTicket = privKeyNode.hashAndSign('sha256', ticket, 'utf8', 'base64');
         //console.log('encrypted', encTicket, '\n');
         //console.log('signed', sig, '\n');
+
+        //var dTicket = privkeyAndroid.decrypt(encTicket, 'base64', 'utf8');
+        //
+        //console.log(ticket);
+        //console.log(encTicket);
+        //console.log(dTicket);
 
         reply([
             {
@@ -446,6 +448,43 @@ var createTicket = function (request, reply, currentTrip, firstStation, lastStat
         ]).code(200);
     } else {
         reply().code(400);
+    }
+};
+
+exports.payHandler = function (request, reply) {
+    var user = request.auth.credentials;
+    var encryptedTicket = request.payload.ticket;
+    var dateSplit = [];
+
+    if (user.cardDate != null)
+        dateSplit = user.cardDate.split('/');
+
+    var cardMonth = dateSplit[0];
+    var cardYear = dateSplit[1];
+    var currentMonth = new Date().getMonth() + 1;
+    var currentYear = new Date().getFullYear();
+    currentYear = currentYear.toString().substr(2, 2);
+
+    console.log("PAYMENT");
+    console.log(currentMonth);
+    console.log(currentYear);
+
+    if (user.card != null && ((cardYear > currentYear) || (cardYear == currentYear && cardMonth >= currentMonth))) {
+
+        var ticket = privkeyAndroid.decrypt(encryptedTicket, 'base64', 'utf8');
+
+        console.log(ticket);
+        var ticketParams = ticket.split('--');
+        var email = ticketParams[1].split(':')[1];
+        var tripID = ticketParams[0].split(':')[1];
+        console.log(email);
+        if (email == request.auth.credentials.email) {
+            console.log("valid ticket");
+        }
+
+    } else {
+
+        reply("Invalid Card Info").code(400);
     }
 };
 
