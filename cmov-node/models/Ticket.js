@@ -33,6 +33,13 @@ module.exports = function(sequelize, DataTypes) {
                             UserEmail: email
                         }
                     });
+                },
+                findAllTicketFromTrip: function (ticketModel, tripID) {
+                    return ticketModel.findAll({
+                       where: {
+                           TripId: tripID
+                       }
+                    });
                 }
             },
             tableName: 'ticket',

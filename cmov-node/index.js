@@ -118,6 +118,11 @@ Glue.compose(manifest, options, function (err, server) {
         exposeRequest: true
     });
 
+    server.auth.strategy('pikeAuth', 'bearerAuth', {
+        validateFunction: validatePike,
+        exposeRequest: true
+    });
+
     var routes = require('./routes/routes.js');
 
     server.route(routes);

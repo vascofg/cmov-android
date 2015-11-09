@@ -11,6 +11,32 @@ var ticketPrice = 1;
 //var privkeyAndroid = ursa.createPrivateKey(fs.readFileSync('./androidKeys/privkey.pem'));
 //var pubkeyNode = ursa.createPublicKey(fs.readFileSync('./nodeKeys/pubkey.pem'));
 
+exports.ticketsTripHandler = function (request, reply) {
+    //var pike = request.auth.credentials;
+    var tripID = request.params.trip;
+    var ticketModel = request.server.plugins['hapi-sequelized'].db.sequelize.models.Ticket;
+
+    if (tripID != null) {
+        ticketModel.findAllTicketFromTrip(ticketModel, tripID).then(function (tickets) {
+
+            var ticketsArray = [];
+            if (tickets) {
+                tickets.forEach(function (ticket) {
+                    var ticketsJson = {};
+                    ticketsJson.ticket = ticket.ticketEnc;
+                    ticketsJson.state = ticket.state;
+
+                    ticketsArray.push(ticketsJson);
+                });
+            }
+
+            reply(ticketsArray).code(200);
+        });
+    } else {
+        reply("Error in database").code(400);
+    }
+};
+
 exports.ticketsHandler = function (request, reply) {
     var user = request.auth.credentials;
     var ticketModel = request.server.plugins['hapi-sequelized'].db.sequelize.models.Ticket;
