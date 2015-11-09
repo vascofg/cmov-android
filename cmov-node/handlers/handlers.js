@@ -2,7 +2,7 @@ var https = require('https');
 var fs = require('fs');
 var ursa = require('ursa');
 
-var privKeyNode = ursa.createPrivateKey(fs.readFileSync('./nodeKeys/privkey.pem'));
+//var privKeyNode = ursa.createPrivateKey(fs.readFileSync('./nodeKeys/privkey.pem'));
 var pubkeyAndroid = ursa.createPublicKey(fs.readFileSync('./androidKeys/pubkey.pem'));
 var privkeyAndroid = ursa.createPrivateKey(fs.readFileSync('./androidKeys/privkey.pem'));
 
@@ -10,6 +10,18 @@ var ticketPrice = 1;
 
 //var privkeyAndroid = ursa.createPrivateKey(fs.readFileSync('./androidKeys/privkey.pem'));
 //var pubkeyNode = ursa.createPublicKey(fs.readFileSync('./nodeKeys/pubkey.pem'));
+
+exports.ticketStatusHandler = function (request, reply) {
+
+    var status = request.payload;
+    var ticketModel = request.server.plugins['hapi-sequelized'].db.sequelize.models.Ticket;
+
+    status.forEach(function (ticket) {
+        //console.log(ticket.state);
+
+        ticketModel.setTicketUsed(ticketModel, ticket);
+    })
+};
 
 exports.ticketsTripHandler = function (request, reply) {
     //var pike = request.auth.credentials;

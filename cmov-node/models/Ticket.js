@@ -40,6 +40,16 @@ module.exports = function(sequelize, DataTypes) {
                            TripId: tripID
                        }
                     });
+                },
+                setTicketUsed: function (ticketModel, ticket) {
+
+                    ticketModel.find({
+                        ticketEnc: ticket
+                    }).then( function (oldTicket) {
+                        oldTicket.update({
+                            state: "used"
+                        });
+                    });
                 }
             },
             tableName: 'ticket',

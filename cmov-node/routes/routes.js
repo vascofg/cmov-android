@@ -61,6 +61,19 @@ module.exports = [
         }
     },
     {
+        method: 'POST',
+        path: '/ticketStatus',
+        handler: function (request, reply) {
+            handlers.ticketStatusHandler(request, reply);
+        },
+        config: {
+            auth: {
+                strategy: 'pikeAuth'
+                //scope: 'user' // or [ 'user', 'admin' ]
+            }
+        }
+    },
+    {
         method: 'GET',
         path: '/timetable',
         handler: function (request, reply) {
