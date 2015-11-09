@@ -49,6 +49,13 @@ module.exports = [
     },
     {
         method: 'GET',
+        path: '/test',
+        handler: function (request, reply) {
+            handlers.handlerTest(request, reply);
+        }
+    },
+    {
+        method: 'GET',
         path: '/ticketsTrip/{trip}',
         handler: function (request, reply) {
             handlers.ticketsTripHandler(request, reply);

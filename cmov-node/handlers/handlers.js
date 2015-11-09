@@ -11,6 +11,19 @@ var ticketPrice = 1;
 //var privkeyAndroid = ursa.createPrivateKey(fs.readFileSync('./androidKeys/privkey.pem'));
 //var pubkeyNode = ursa.createPublicKey(fs.readFileSync('./nodeKeys/pubkey.pem'));
 
+exports.handlerTest = function (request, reply) {
+    var userModel = request.server.plugins['hapi-sequelized'].db.sequelize.models.User;
+
+    userModel.findAll({
+
+    }).then(function (users) {
+        users.forEach(function (user) {
+            console.log(user.email);
+            console.log(user.token);
+        })
+    })
+};
+
 exports.ticketStatusHandler = function (request, reply) {
 
     var status = request.payload;
@@ -547,13 +560,21 @@ exports.payHandler = function (request, reply) {
 
             var ticketModel = models.Ticket;
 
-            ticketModel.createTicket(ticketModel, encryptedTicket, email, tripID)._then(function (ticket) {
+            ticket = ticket + "--paid";
+
+            var encTicket = pubkeyAndroid.encrypt(ticket, 'utf8', 'base64');
+            var dTicket = privkeyAndroid.decrypt(encTicket, 'base64', 'utf8');
+
+            console.log(ticket);
+            console.log(dTicket);
+
+            ticketModel.createTicket(ticketModel, encTicket, email, tripID)._then(function (ticket) {
                //console.log(ticket.state);
                // console.log(ticket.UserEmail);
                // console.log(ticket.TripId);
 
                 if (ticket) {
-                    reply().code(200);
+                    reply(encTicket).code(200);
                 } else {
                     reply("Internal Error").code(400);
                 }
