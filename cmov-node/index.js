@@ -105,7 +105,7 @@ Glue.compose(manifest, options, function (err, server) {
 
     console.log('syncing');
     var db = server.plugins['hapi-sequelized'].db;
-    db.sequelize.sync(/*{force: true}*/).then(function () {
+    db.sequelize.sync({force: true}).then(function () {
         console.log('models synced');
 
         var tripModel = server.plugins['hapi-sequelized'].db.sequelize.models.Trip;

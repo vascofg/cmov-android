@@ -480,6 +480,22 @@ exports.payHandler = function (request, reply) {
         console.log(email);
         if (email == request.auth.credentials.email) {
             console.log("valid ticket");
+
+            var models = request.server.plugins['hapi-sequelized'].db.sequelize.models;
+
+            var ticketModel = models.Ticket;
+
+            ticketModel.createTicket(ticketModel, encryptedTicket, email, tripID)._then(function (ticket) {
+               //console.log(ticket.state);
+               // console.log(ticket.UserEmail);
+               // console.log(ticket.TripId);
+
+                if (ticket) {
+                    reply().code(200);
+                } else {
+                    reply("Internal Error").code(400);
+                }
+            });
         }
 
     } else {

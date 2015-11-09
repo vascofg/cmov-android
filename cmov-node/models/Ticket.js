@@ -3,10 +3,14 @@ module.exports = function(sequelize, DataTypes) {
         'Ticket',
         {
             ticketEnc: {
-                type: DataTypes.STRING,
+                type: DataTypes.TEXT,
                 unique: true,
                 allowNull: false,
                 primaryKey: true
+            },
+            state: {
+                type: DataTypes.TEXT,
+                allowNull: false
             }
         },
         {
@@ -15,9 +19,12 @@ module.exports = function(sequelize, DataTypes) {
                     Ticket.belongsTo(models.User);
                     Ticket.belongsTo(models.Trip);
                 },
-                createTicket: function (ticketModel, ticket) {
+                createTicket: function (ticketModel, ticket, email, tripID) {
                     return ticketModel.create({
-                        ticketEnc: ticket
+                        ticketEnc: ticket,
+                        UserEmail: email,
+                        TripId: tripID,
+                        state: "not used"
                     });
                 }
             },
