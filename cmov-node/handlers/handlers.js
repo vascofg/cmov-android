@@ -202,7 +202,7 @@ exports.getTicketHandler = function (request, reply) {
 
     var nStations = 0;
     if ((initialInLineA && finalInLineA) || (!initialInLineA && !finalInLineA)) {
-        nStations = indexFinal - indexInitial;
+        nStations = Math.abs(indexFinal - indexInitial);
     } else {
         if (initialInLineA) {
             nStations = Math.abs(indexInitial - centralIndex) + indexFinal;
@@ -222,16 +222,17 @@ exports.getTicketHandler = function (request, reply) {
             trips.forEach(function (trip) {
                 var stationArray = getTimeByStation(trip.times, initialStation, finalStation);
                 //console.log(station);
-                var firstStation = stationArray[0];
-                if (firstStation.station == initialStation && firstStation.time <= tripInitialTime) {
-                    if (currentTrip == null || currentTripTime < firstStation.time) {
-                        currentTrip = trip;
-                        currentTripTime = firstStation.time;
-                        currentStationArray[0] = stationArray[0];
-                        currentStationArray[1]= stationArray[1];
+                if (stationArray.length == 2) {
+                    var firstStation = stationArray[0];
+                    if (firstStation.station == initialStation && firstStation.time <= tripInitialTime) {
+                        if (currentTrip == null || currentTripTime < firstStation.time) {
+                            currentTrip = trip;
+                            currentTripTime = firstStation.time;
+                            currentStationArray[0] = stationArray[0];
+                            currentStationArray[1] = stationArray[1];
+                        }
                     }
                 }
-
                 //console.log(currentTrip);
             });
             createTicket(request, reply, currentTrip, currentStationArray[0], currentStationArray[1], ticketCost);
@@ -243,13 +244,17 @@ exports.getTicketHandler = function (request, reply) {
             trips.forEach(function (trip) {
                 var stationArray = getTimeByStation(trip.times, initialStation, finalStation);
                 //console.log(station);
-                var lastStation = stationArray[1];
-                if (lastStation.station == finalStation && lastStation.time <= tripFinalTime) {
-                    if (currentTrip == null || currentTripTime < lastStation.time) {
-                        currentTrip = trip;
-                        currentTripTime = lastStation.time;
-                        currentStationArray[0] = stationArray[0];
-                        currentStationArray[1]= stationArray[1];
+
+                if (stationArray.length == 2) {
+                    var lastStation = stationArray[1];
+                    console.log(stationArray);
+                    if (lastStation.station == finalStation && lastStation.time <= tripFinalTime) {
+                        if (currentTrip == null || currentTripTime < lastStation.time) {
+                            currentTrip = trip;
+                            currentTripTime = lastStation.time;
+                            currentStationArray[0] = stationArray[0];
+                            currentStationArray[1] = stationArray[1];
+                        }
                     }
                 }
 
@@ -284,7 +289,6 @@ var createTicket = function (request, reply, currentTrip, firstStation, lastStat
         reply().code(400);
     }
 };
-
 
 
 //console.log('Decrypt with Alice Private; Verify with Bob Public');
