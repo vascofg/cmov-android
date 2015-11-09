@@ -284,6 +284,7 @@ exports.getTicketHandler = function (request, reply) {
                     //console.log(currentTrip);
                     //console.log(secondTrip);
                     //createTicket(request, reply, currentTrip, currentStationArray[0], currentStationArray[1], ticketCost);
+                    createMultipleTickets(request, reply, currentTrip, currentStationArray, secondTrip, secondStationArray, ticketCost);
                 });
             });
         }
@@ -357,11 +358,66 @@ exports.getTicketHandler = function (request, reply) {
                     //console.log(currentTrip);
                     //console.log(secondTrip);
                     //createTicket(request, reply, currentTrip, currentStationArray[0], currentStationArray[1], ticketCost);
+
+                    createMultipleTickets(request, reply, currentTrip, currentStationArray, secondTrip, secondStationArray, ticketCost);
                 });
             });
         }
     }
 };
+
+
+var createMultipleTickets = function (request, reply, currentTrip, currentStationArray, secondTrip, secondStationArray, tripCost) {
+
+    var firstTicket, secondTicket;
+    if (currentTrip != null) {
+        var ticket = {};
+
+        ticket.trip = currentTrip;
+        ticket.firstStation = currentStationArray[0];
+        ticket.lastStation = currentStationArray[1];
+        ticket.tripCost = tripCost;
+
+
+        //console.log('Encrypt with Alice Public; Sign with Bob Private');
+        firstTicket = pubkeyAndroid.encrypt(ticket, 'utf8', 'base64');
+        //var sigTicket = privKeyNode.hashAndSign('sha256', ticket, 'utf8', 'base64');
+        //console.log('encrypted', encTicket, '\n');
+        //console.log('signed', sig, '\n');
+    }
+
+    if (secondTrip != null) {
+        var ticket = {};
+
+        ticket.trip = currentTrip;
+        ticket.firstStation = secondStationArray[0];
+        ticket.lastStation = secondStationArray[1];
+        ticket.tripCost = tripCost;
+
+
+        //console.log('Encrypt with Alice Public; Sign with Bob Private');
+        secondTicket = pubkeyAndroid.encrypt(ticket, 'utf8', 'base64');
+        //var sigTicket = privKeyNode.hashAndSign('sha256', ticket, 'utf8', 'base64');
+        //console.log('encrypted', encTicket, '\n');
+        //console.log('signed', sig, '\n');
+    }
+
+    reply([
+        {
+            ticket: firstTicket,
+            totalCost: tripCost,
+            firstStation: currentStationArray[0],
+            lastStation: currentStationArray[1]
+        },
+        {
+            ticket: secondTicket,
+            totalCost: tripCost,
+            firstStation: secondStationArray[0],
+            lastStation: secondStationArray[1]
+        }
+    ]).code(200);
+};
+
 
 var createTicket = function (request, reply, currentTrip, firstStation, lastStation, tripCost) {
 
@@ -380,7 +436,14 @@ var createTicket = function (request, reply, currentTrip, firstStation, lastStat
         //console.log('encrypted', encTicket, '\n');
         //console.log('signed', sig, '\n');
 
-        reply({ticket: encTicket, cost: tripCost, firstStation: firstStation, lastStation: lastStation}).code(200);
+        reply([
+            {
+                ticket: encTicket,
+                totalCost: tripCost,
+                firstStation: firstStation,
+                lastStation: lastStation
+            }
+        ]).code(200);
     } else {
         reply().code(400);
     }
