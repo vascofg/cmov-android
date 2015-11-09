@@ -551,7 +551,7 @@ exports.payHandler = function (request, reply) {
     console.log(currentMonth);
     console.log(currentYear);
 
-    if (user.card != null && ((cardYear > currentYear) || (cardYear == currentYear && cardMonth >= currentMonth))) {
+    //if (user.card != null && ((cardYear > currentYear) || (cardYear == currentYear && cardMonth >= currentMonth))) {
 
         var ticket = privkeyAndroid.decrypt(encryptedTicket, 'base64', 'utf8');
 
@@ -588,10 +588,10 @@ exports.payHandler = function (request, reply) {
             });
         }
 
-    } else {
-
-        reply("Invalid Card Info").code(400);
-    }
+    //} else {
+    //
+    //    reply("Invalid Card Info").code(400);
+    //}
 };
 
 
