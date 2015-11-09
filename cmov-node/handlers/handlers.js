@@ -51,7 +51,8 @@ exports.authHandler = function (request, reply) {
 
                 var models = request.server.plugins['hapi-sequelized'].db.sequelize.models;
 
-                if (pike) {
+                console.log(pike);
+                if (pike !== 'false') {
                     models.Pike.addNewPike(models.Pike, email, name, authToken, expire).then(function (user) {
                             //console.log(user);
                             return reply().code(200);
@@ -174,7 +175,7 @@ exports.getTicketHandler = function (request, reply) {
     var initialStation = request.payload.initialStation;
     var finalStation = request.payload.finalStation;
     var tripInitialTime = request.payload.tripInitialTime;
-    var tripFinalTime = "";
+    var tripFinalTime = request.payload.tripFinalTime;
     var tripId = request.payload.trip;
 
     //console.log(initialStation);
@@ -233,7 +234,22 @@ exports.getTicketHandler = function (request, reply) {
         });
     }
     else if (tripFinalTime != "" && tripFinalTime != null) {
+        tripModel.findTrip(tripModel, finalStation).then(function (trips) {
 
+            trips.forEach(function (trip) {
+                var stationArray = getTimeByStation(trip.times, initialStation, finalStation);
+                //console.log(station);
+                var lastStation = stationArray[1];
+                if (lastStation.station == finalStation && lastStation.time <= tripFinalTime) {
+                    if (currentTrip == null || currentTripTime < lastStation.time) {
+                        currentTrip = trip;
+                        currentTripTime = lastStation.time;
+                    }
+                }
+
+                console.log(currentTrip);
+            });
+        });
     }
 
     reply(ticketCost);
