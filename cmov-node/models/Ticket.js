@@ -26,6 +26,13 @@ module.exports = function(sequelize, DataTypes) {
                         TripId: tripID,
                         state: "not used"
                     });
+                },
+                findAllTicketFromUser: function (ticketModel, email) {
+                    return ticketModel.findAll({
+                        where: {
+                            UserEmail: email
+                        }
+                    });
                 }
             },
             tableName: 'ticket',

@@ -13,7 +13,27 @@ var ticketPrice = 1;
 
 exports.ticketsHandler = function (request, reply) {
     var user = request.auth.credentials;
-    reply(user);
+    var ticketModel = request.server.plugins['hapi-sequelized'].db.sequelize.models.Ticket;
+
+    if (user.email != null) {
+        ticketModel.findAllTicketFromUser(ticketModel, user.email).then(function (tickets) {
+
+            var ticketsArray = [];
+            if (tickets) {
+                tickets.forEach(function (ticket) {
+                    var ticketsJson = {};
+                    ticketsJson.ticket = ticket.ticketEnc;
+                    ticketsJson.state = ticket.state;
+
+                    ticketsArray.push(ticketsJson);
+                });
+            }
+
+            reply(ticketsArray).code(200);
+        });
+    } else {
+        reply("Error in database").code(400);
+    }
 };
 
 exports.handler2 = function (request, reply) {
