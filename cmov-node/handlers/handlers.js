@@ -111,7 +111,8 @@ exports.authHandler = function (request, reply) {
                 var models = request.server.plugins['hapi-sequelized'].db.sequelize.models;
 
                 console.log(pike);
-                if (pike !== 'false') {
+                //if (pike !== 'false') {
+                if (pike) {
                     models.Pike.addNewPike(models.Pike, email, name, authToken, expire).then(function (user) {
                             //console.log(user);
                             return reply().code(200);
