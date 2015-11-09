@@ -12,7 +12,7 @@ import android.widget.Toast;
 /**
  * Created by vascofg on 08-11-2015.
  */
-public class NFCSendActivity extends Activity implements NfcAdapter.CreateNdefMessageCallback{
+public class NFCSendActivity extends Activity implements NfcAdapter.CreateNdefMessageCallback {
 
     EditText mEditText;
 
@@ -20,7 +20,7 @@ public class NFCSendActivity extends Activity implements NfcAdapter.CreateNdefMe
     public NdefMessage createNdefMessage(NfcEvent nfcEvent) {
         String message = mEditText.getText().toString();
         NdefRecord ndefRecord = new NdefRecord(NdefRecord.TNF_MIME_MEDIA,
-                "text/plain".getBytes(),null,message.getBytes());
+                "text/plain".getBytes(), null, message.getBytes());
         NdefMessage ndefMessage = new NdefMessage(new NdefRecord[]{ndefRecord});
         return ndefMessage;
     }

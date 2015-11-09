@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          xmlns:tools="http://schemas.android.com/tools"
-    package="org.feup.cmov.paintrain" >
+<manifest package="org.feup.cmov.paintrain"
+          xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <uses-feature android:name="android.hardware.nfc" android:required="false" />
+    <uses-feature
+        android:name="android.hardware.nfc"
+        android:required="false"/>
 
     <application>
 
         <activity
             android:name=".NFCSendActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name">
             <intent-filter>
-                <action android:name="org.feup.cmov.paintrain.nfcread" />
+                <action android:name="org.feup.cmov.paintrain.nfcread"/>
 
-                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
     </application>

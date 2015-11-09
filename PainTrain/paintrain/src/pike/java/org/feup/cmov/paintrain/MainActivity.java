@@ -1,16 +1,9 @@
 package org.feup.cmov.paintrain;
 
-import android.app.ActionBar;
 import android.app.Activity;
-import android.app.Fragment;
-import android.app.FragmentManager;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.widget.DrawerLayout;
-import android.view.*;
-
-import java.lang.reflect.Method;
 
 
 public class MainActivity extends Activity {
@@ -31,7 +24,7 @@ public class MainActivity extends Activity {
         } catch (Exception e) {
 
             Uri marketUri = Uri.parse("market://details?id=com.google.zxing.client.android");
-            Intent marketIntent = new Intent(Intent.ACTION_VIEW,marketUri);
+            Intent marketIntent = new Intent(Intent.ACTION_VIEW, marketUri);
             startActivity(marketIntent);
 
         }

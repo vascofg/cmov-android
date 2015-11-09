@@ -22,243 +22,223 @@ import java.util.Map;
  */
 public class JSONArrayAdapter extends BaseAdapter implements Filterable {
 
-	private JSONArray data;
-	private String idField;
-	private InternalSimpleAdapter internalAdapter;
+    private JSONArray data;
+    private String idField;
+    private InternalSimpleAdapter internalAdapter;
 
-	/**
+    /**
      * Constructor
      *
-     * @param context The context where the View associated with this SimpleAdapter is running
-     *
-     * @param data A JSONArray of JSONObjects. Each object in the array corresponds to one row in the list. The
-     *        JSONObjects contain the data for each row, and should include all the entries specified in
-     *        "from"
-     *
+     * @param context  The context where the View associated with this SimpleAdapter is running
+     * @param data     A JSONArray of JSONObjects. Each object in the array corresponds to one row in the list. The
+     *                 JSONObjects contain the data for each row, and should include all the entries specified in
+     *                 "from"
      * @param resource Resource identifier of a view layout that defines the views for this list
-     *        item. The layout file should include at least those named views defined in "to"
-     *
-     * @param from A list of field names that will be mapped from the JSONObject associated with each
-     *        item.
-     *
-     * @param to The views that should display column in the "from" parameter. These should all be
-     *        TextViews. The first N views in this list are given the values of the first N columns
-     *        in the from parameter.
-     *
-     * @param idField The field name which contains a numeric identifier for each JSONObject.
+     *                 item. The layout file should include at least those named views defined in "to"
+     * @param from     A list of field names that will be mapped from the JSONObject associated with each
+     *                 item.
+     * @param to       The views that should display column in the "from" parameter. These should all be
+     *                 TextViews. The first N views in this list are given the values of the first N columns
+     *                 in the from parameter.
+     * @param idField  The field name which contains a numeric identifier for each JSONObject.
      */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public JSONArrayAdapter(Context context,
-			JSONArray data,
-			int resource,
-			String[] from,
-			int[] to,
-			String idField) {
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    public JSONArrayAdapter(Context context,
+                            JSONArray data,
+                            int resource,
+                            String[] from,
+                            int[] to,
+                            String idField) {
 
-		this.data = data;
-		this.idField = idField;
-		List simpleData = jsonToMapList(data, from);
-		internalAdapter = new InternalSimpleAdapter(context, simpleData, resource, from, to);
-	}
+        this.data = data;
+        this.idField = idField;
+        List simpleData = jsonToMapList(data, from);
+        internalAdapter = new InternalSimpleAdapter(context, simpleData, resource, from, to);
+    }
 
-	/**
+    /**
      * Constructor
      *
-     * @param context The context where the View associated with this SimpleAdapter is running
-     *
-     * @param data A JSONArray of JSONObjects. Each object in the array corresponds to one row in the list. The
-     *        JSONObjects contain the data for each row, and should include all the entries specified in
-     *        "from"
-     *
+     * @param context  The context where the View associated with this SimpleAdapter is running
+     * @param data     A JSONArray of JSONObjects. Each object in the array corresponds to one row in the list. The
+     *                 JSONObjects contain the data for each row, and should include all the entries specified in
+     *                 "from"
      * @param resource Resource identifier of a view layout that defines the views for this list
-     *        item. The layout file should include at least those named views defined in "to"
-     *
-     * @param from A list of field names that will be mapped from the JSONObject associated with each
-     *        item.
-     *
-     * @param to The views that should display column in the "from" parameter. These should all be
-     *        TextViews. The first N views in this list are given the values of the first N columns
-     *        in the from parameter.
+     *                 item. The layout file should include at least those named views defined in "to"
+     * @param from     A list of field names that will be mapped from the JSONObject associated with each
+     *                 item.
+     * @param to       The views that should display column in the "from" parameter. These should all be
+     *                 TextViews. The first N views in this list are given the values of the first N columns
+     *                 in the from parameter.
      */
-	public JSONArrayAdapter(Context context,
-			JSONArray data,
-			int resource,
-			String[] from,
-			int[] to) {
-		this(context, data, resource, from, to, null);
-	}
+    public JSONArrayAdapter(Context context,
+                            JSONArray data,
+                            int resource,
+                            String[] from,
+                            int[] to) {
+        this(context, data, resource, from, to, null);
+    }
 
-	@SuppressWarnings("rawtypes")
-	private List jsonToMapList(JSONArray data, String[] fields) {
+    @SuppressWarnings("rawtypes")
+    private List jsonToMapList(JSONArray data, String[] fields) {
 
-		List<Map> listData = new ArrayList<Map>();
+        List<Map> listData = new ArrayList<Map>();
         HashMap<String, String> item;
 
-		for (int i = 0; i < data.length(); i++) {
-			JSONObject o = data.optJSONObject(i);
-			if (o != null) {
-				item = new HashMap<String, String>();
-				for (int j = 0; j < fields.length; j++) {
-					String fname = fields[j];
-					item.put(fname, optString(o, fname));
-				}
-				listData.add(item);
-			}
-		}
-		return listData;
+        for (int i = 0; i < data.length(); i++) {
+            JSONObject o = data.optJSONObject(i);
+            if (o != null) {
+                item = new HashMap<String, String>();
+                for (int j = 0; j < fields.length; j++) {
+                    String fname = fields[j];
+                    item.put(fname, optString(o, fname));
+                }
+                listData.add(item);
+            }
+        }
+        return listData;
 
-	}
+    }
 
-	private String optString(JSONObject o, String key) {
-		//iterate over child json keys if we need to
-		String[] keys = key.split("\\.");
-		for (int i = 0; i < keys.length - 1; i++)
-        		o = o.optJSONObject(keys[i]);
-        	String lastKey = keys[keys.length - 1];
-        	String s = o.optString(lastKey);
-		if (s == null || s.equals("null")) {
-			return null;
-		} else {
-			return s;
-		}
-	}
+    private String optString(JSONObject o, String key) {
+        //iterate over child json keys if we need to
+        String[] keys = key.split("\\.");
+        for (int i = 0; i < keys.length - 1; i++)
+            o = o.optJSONObject(keys[i]);
+        String lastKey = keys[keys.length - 1];
+        String s = o.optString(lastKey);
+        if (s == null || s.equals("null")) {
+            return null;
+        } else {
+            return s;
+        }
+    }
 
-	public SimpleAdapter unwrap() {
-		return internalAdapter;
-	}
+    public SimpleAdapter unwrap() {
+        return internalAdapter;
+    }
 
-	public int getCount() {
-		return internalAdapter.getCount();
-	}
+    public int getCount() {
+        return internalAdapter.getCount();
+    }
 
-	public Object getItem(int position) {
-		return data.optJSONObject(position);
-	}
+    public Object getItem(int position) {
+        return data.optJSONObject(position);
+    }
 
-	public long getItemId(int position) {
-		if (idField != null) {
-			JSONObject o = data.optJSONObject(position);
-			if (o != null) {
-				return o.optLong(idField, 0);
-			}
-		}
-		return internalAdapter.getItemId(position);
-	}
+    public long getItemId(int position) {
+        if (idField != null) {
+            JSONObject o = data.optJSONObject(position);
+            if (o != null) {
+                return o.optLong(idField, 0);
+            }
+        }
+        return internalAdapter.getItemId(position);
+    }
 
-	public View getView(int position, View convertView, ViewGroup parent) {
-		return internalAdapter.getView(position, convertView, parent);
-	}
+    public View getView(int position, View convertView, ViewGroup parent) {
+        return internalAdapter.getView(position, convertView, parent);
+    }
 
-	/**
-	 * Returns the {@link ViewBinder} used to bind data to views.
-	 *
-	 * @return a ViewBinder or null if the binder does not exist
-	 *
-	 * @see #setViewBinder(ViewBinder)
-	 */
-	public ViewBinder getViewBinder() {
-		return internalAdapter.getViewBinder();
-	}
+    /**
+     * Returns the {@link ViewBinder} used to bind data to views.
+     *
+     * @return a ViewBinder or null if the binder does not exist
+     * @see #setViewBinder(ViewBinder)
+     */
+    public ViewBinder getViewBinder() {
+        return internalAdapter.getViewBinder();
+    }
 
-	/**
-	 * Sets the binder used to bind data to views.
-	 * 
-	 * @param viewBinder
-	 *            the binder used to bind data to views, can be null to remove
-	 *            the existing binder
-	 * 
-	 * @see #getViewBinder()
-	 */
-	public void setViewBinder(ViewBinder viewBinder) {
-		internalAdapter.setViewBinder(viewBinder);
-	}
+    /**
+     * Sets the binder used to bind data to views.
+     *
+     * @param viewBinder the binder used to bind data to views, can be null to remove
+     *                   the existing binder
+     * @see #getViewBinder()
+     */
+    public void setViewBinder(ViewBinder viewBinder) {
+        internalAdapter.setViewBinder(viewBinder);
+    }
 
-	/**
-	 * Called by bindView() to set the image for an ImageView but only if there
-	 * is no existing ViewBinder or if the existing ViewBinder cannot handle
-	 * binding to an ImageView.
-	 * 
-	 * This method is called instead of {@link #setViewImage(ImageView, String)}
-	 * if the supplied data is an int or Integer.
-	 * 
-	 * @param v
-	 *            ImageView to receive an image
-	 * @param value
-	 *            the value retrieved from the data set
-	 * 
-	 * @see #setViewImage(ImageView, String)
-	 */
-	public void setViewImage(ImageView v, int value) {
-		v.setImageResource(value);
-	}
+    /**
+     * Called by bindView() to set the image for an ImageView but only if there
+     * is no existing ViewBinder or if the existing ViewBinder cannot handle
+     * binding to an ImageView.
+     * <p>
+     * This method is called instead of {@link #setViewImage(ImageView, String)}
+     * if the supplied data is an int or Integer.
+     *
+     * @param v     ImageView to receive an image
+     * @param value the value retrieved from the data set
+     * @see #setViewImage(ImageView, String)
+     */
+    public void setViewImage(ImageView v, int value) {
+        v.setImageResource(value);
+    }
 
-	/**
-	 * Called by bindView() to set the image for an ImageView but only if there
-	 * is no existing ViewBinder or if the existing ViewBinder cannot handle
-	 * binding to an ImageView.
-	 * 
-	 * By default, the value will be treated as an image resource. If the value
-	 * cannot be used as an image resource, the value is used as an image Uri.
-	 * 
-	 * This method is called instead of {@link #setViewImage(ImageView, int)} if
-	 * the supplied data is not an int or Integer.
-	 * 
-	 * @param v
-	 *            ImageView to receive an image
-	 * @param value
-	 *            the value retrieved from the data set
-	 * 
-	 * @see #setViewImage(ImageView, int)
-	 */
-	public void setViewImage(ImageView v, String value) {
-		try {
+    /**
+     * Called by bindView() to set the image for an ImageView but only if there
+     * is no existing ViewBinder or if the existing ViewBinder cannot handle
+     * binding to an ImageView.
+     * <p>
+     * By default, the value will be treated as an image resource. If the value
+     * cannot be used as an image resource, the value is used as an image Uri.
+     * <p>
+     * This method is called instead of {@link #setViewImage(ImageView, int)} if
+     * the supplied data is not an int or Integer.
+     *
+     * @param v     ImageView to receive an image
+     * @param value the value retrieved from the data set
+     * @see #setViewImage(ImageView, int)
+     */
+    public void setViewImage(ImageView v, String value) {
+        try {
             v.setImageResource(Integer.parseInt(value));
         } catch (NumberFormatException nfe) {
             v.setImageURI(Uri.parse(value));
         }
-	}
+    }
 
-	/**
-	 * Called by bindView() to set the text for a TextView but only if there is
-	 * no existing ViewBinder or if the existing ViewBinder cannot handle
-	 * binding to an TextView.
-	 * 
-	 * @param v
-	 *            TextView to receive text
-	 * @param text
-	 *            the text to be set for the TextView
-	 */
-	public void setViewText(TextView v, String text) {
-		v.setText(text);
-	}
+    /**
+     * Called by bindView() to set the text for a TextView but only if there is
+     * no existing ViewBinder or if the existing ViewBinder cannot handle
+     * binding to an TextView.
+     *
+     * @param v    TextView to receive text
+     * @param text the text to be set for the TextView
+     */
+    public void setViewText(TextView v, String text) {
+        v.setText(text);
+    }
 
-	public Filter getFilter() {
-		return internalAdapter.getFilter();
-	}
-	
-	class InternalSimpleAdapter extends SimpleAdapter {
+    public Filter getFilter() {
+        return internalAdapter.getFilter();
+    }
 
-		public InternalSimpleAdapter(Context context,
-				List<? extends Map<String, ?>> data, int resource,
-				String[] from, int[] to) {
-			super(context, data, resource, from, to);
-		}
+    class InternalSimpleAdapter extends SimpleAdapter {
 
-		@Override
-		public void setViewImage(ImageView v, int value) {
-			JSONArrayAdapter.this.setViewImage(v, value);
-		}
+        public InternalSimpleAdapter(Context context,
+                                     List<? extends Map<String, ?>> data, int resource,
+                                     String[] from, int[] to) {
+            super(context, data, resource, from, to);
+        }
 
-		@Override
-		public void setViewImage(ImageView v, String value) {
-			JSONArrayAdapter.this.setViewImage(v, value);
-		}
+        @Override
+        public void setViewImage(ImageView v, int value) {
+            JSONArrayAdapter.this.setViewImage(v, value);
+        }
 
-		@Override
-		public void setViewText(TextView v, String text) {
-			JSONArrayAdapter.this.setViewText(v, text);
-		}
-		
-	}
+        @Override
+        public void setViewImage(ImageView v, String value) {
+            JSONArrayAdapter.this.setViewImage(v, value);
+        }
+
+        @Override
+        public void setViewText(TextView v, String text) {
+            JSONArrayAdapter.this.setViewText(v, text);
+        }
+
+    }
 
 }

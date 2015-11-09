@@ -11,7 +11,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.android.volley.*;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.auth.GoogleAuthException;
@@ -223,7 +226,7 @@ public class AuthActivity extends Activity implements
 
     public void authWithServer(String token) {
         RequestQueue queue = Volley.newRequestQueue(this);
-        String url = getResources().getString(R.string.base_url)+"/auth";
+        String url = getResources().getString(R.string.base_url) + "/auth";
         JSONObject jo = new JSONObject();
 
         try {
@@ -232,13 +235,13 @@ public class AuthActivity extends Activity implements
             JsonObjectRequest jsonObjectRequest = new JsonObjectRequestFixed(Request.Method.POST, url, jo, new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject jsonObject) {
-                    Toast.makeText(getBaseContext(),"Success authing with server!",Toast.LENGTH_LONG).show();
-                    Log.d(TAG,jsonObject.toString());
+                    Toast.makeText(getBaseContext(), "Success authing with server!", Toast.LENGTH_LONG).show();
+                    Log.d(TAG, jsonObject.toString());
                 }
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(getBaseContext(),"Error authing with server",Toast.LENGTH_LONG).show();
+                    Toast.makeText(getBaseContext(), "Error authing with server", Toast.LENGTH_LONG).show();
                     Log.e(TAG, error.toString());
                 }
             });

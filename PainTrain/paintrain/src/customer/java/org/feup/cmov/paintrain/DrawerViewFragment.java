@@ -18,6 +18,9 @@ public abstract class DrawerViewFragment extends Fragment {
      */
     private static final String ARG_SECTION_NUMBER = "section_number";
 
+    public DrawerViewFragment() {
+    }
+
     /**
      * Returns a new instance of this fragment for the given section
      * number.
@@ -34,8 +37,7 @@ public abstract class DrawerViewFragment extends Fragment {
             return fragment;
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
-        }
-        catch (java.lang.InstantiationException e) {
+        } catch (java.lang.InstantiationException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {
             e.printStackTrace();
@@ -43,9 +45,6 @@ public abstract class DrawerViewFragment extends Fragment {
             e.printStackTrace();
         }
         return null;
-    }
-
-    public DrawerViewFragment() {
     }
 
     @Override

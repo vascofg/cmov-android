@@ -2,15 +2,13 @@ package org.feup.cmov.paintrain;
 
 import android.app.ActionBar;
 import android.app.Activity;
-import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
-import android.view.*;
-
-import java.lang.reflect.Method;
+import android.view.Menu;
+import android.view.MenuItem;
 
 
 public class MainActivity extends Activity
@@ -46,7 +44,7 @@ public class MainActivity extends Activity
         // update the main content by replacing fragments
         FragmentManager fragmentManager = getFragmentManager();
         DrawerViewFragment f = null;
-        switch(position) {
+        switch (position) {
             default:
             case 0:
                 f = BuyTicketsFragment.newInstance(BuyTicketsFragment.class, position + 1);
@@ -55,13 +53,13 @@ public class MainActivity extends Activity
                 f = TimetableFragment.newInstance(TimetableFragment.class, position + 1);
                 break;
         }
-            fragmentManager.beginTransaction()
-                    .replace(R.id.container, f)
-                    .commit();
+        fragmentManager.beginTransaction()
+                .replace(R.id.container, f)
+                .commit();
     }
 
     public void onSectionAttached(int number) {
-        mTitle = getResources().getStringArray(R.array.titles)[number-1];
+        mTitle = getResources().getStringArray(R.array.titles)[number - 1];
     }
 
     public void restoreActionBar() {
@@ -113,7 +111,7 @@ public class MainActivity extends Activity
         } catch (Exception e) {
 
             Uri marketUri = Uri.parse("market://details?id=com.google.zxing.client.android");
-            Intent marketIntent = new Intent(Intent.ACTION_VIEW,marketUri);
+            Intent marketIntent = new Intent(Intent.ACTION_VIEW, marketUri);
             startActivity(marketIntent);
 
         }

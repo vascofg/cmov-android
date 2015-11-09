@@ -1,14 +1,16 @@
 package org.feup.cmov.paintrain;
 
 import android.app.DialogFragment;
-import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.*;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.Spinner;
+import android.widget.TextView;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -35,10 +37,10 @@ public class BuyTicketsFragment extends DrawerViewFragment implements TimePicker
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView   = inflater.inflate(R.layout.fragment_buy_tickets, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_buy_tickets, container, false);
 
         mTime = (TextView) rootView.findViewById(R.id.buy_tickets_time);
-        Log.d(TAG,"Setting calendar time");
+        Log.d(TAG, "Setting calendar time");
         final Calendar c = Calendar.getInstance();
         setTime(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE));
 
@@ -74,13 +76,13 @@ public class BuyTicketsFragment extends DrawerViewFragment implements TimePicker
                 mTime.getText());
 
         RequestQueue queue = Volley.newRequestQueue(getActivity());
-        String url = getResources().getString(R.string.base_url)+"/ticket";
+        String url = getResources().getString(R.string.base_url) + "/ticket";
 
         try {
             JSONObject jo = new JSONObject();
             jo.put("initialStation", from_stations_spinner.getSelectedItem());
             jo.put("finalStation", to_stations_spinner.getSelectedItem());
-            if(arrival_departure_spinner.getSelectedItemPosition()==0)
+            if (arrival_departure_spinner.getSelectedItemPosition() == 0)
                 jo.put("tripFinalTime", mTime.getText());
             else
                 jo.put("tripInitialTime", mTime.getText());
@@ -88,7 +90,7 @@ public class BuyTicketsFragment extends DrawerViewFragment implements TimePicker
             JsonObjectRequest jsonObjectRequest = new JsonObjectRequestFixed(Request.Method.POST, url, jo, new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject jsonObject) {
-                    Log.d(TAG,jsonObject.toString());
+                    Log.d(TAG, jsonObject.toString());
                 }
             }, new Response.ErrorListener() {
                 @Override
@@ -106,11 +108,11 @@ public class BuyTicketsFragment extends DrawerViewFragment implements TimePicker
     private void pickTime() {
         DialogFragment f = TimePickerFragment.newInstance(this.hourOfDay, this.minute);
         f.setTargetFragment(this, 0);
-        f.show(getFragmentManager(),"pickTime");
+        f.show(getFragmentManager(), "pickTime");
     }
 
     private void setTime(int hourOfDay, int minute) {
-        String formattedTime = String.format("%02d:%02d",hourOfDay,minute);
+        String formattedTime = String.format("%02d:%02d", hourOfDay, minute);
         mTime.setText(formattedTime);
         this.hourOfDay = hourOfDay;
         this.minute = minute;
@@ -118,12 +120,12 @@ public class BuyTicketsFragment extends DrawerViewFragment implements TimePicker
 
     @Override
     public void onDialogTimeChosen(int hourOfDay, int minute) {
-        setTime(hourOfDay,minute);
+        setTime(hourOfDay, minute);
     }
 
     @Override
     public void onClick(View view) {
-        switch(view.getId()) {
+        switch (view.getId()) {
             case R.id.buy_tickets_button:
                 buy_tickets();
                 break;

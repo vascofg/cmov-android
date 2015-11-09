@@ -9,22 +9,26 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="@string/label_from_stations"/>
-    <Spinner android:id="@+id/from_stations_spinner"
-        android:layout_below="@+id/label_from_stations"
+
+    <Spinner
+        android:id="@+id/from_stations_spinner"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/label_from_stations"/>
 
     <TextView
         android:id="@+id/label_to_stations"
-        android:layout_below="@id/from_stations_spinner"
         android:layout_width="fill_parent"
-        android:layout_marginTop="@dimen/layout_vertical_spacing"
         android:layout_height="wrap_content"
+        android:layout_below="@id/from_stations_spinner"
+        android:layout_marginTop="@dimen/layout_vertical_spacing"
         android:text="@string/label_to_stations"/>
-    <Spinner android:id="@+id/to_stations_spinner"
-        android:layout_below="@+id/label_to_stations"
+
+    <Spinner
+        android:id="@+id/to_stations_spinner"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/label_to_stations"/>
 
     <TextView
         android:id="@+id/buy_tickets_time"
@@ -47,8 +51,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/buy_tickets_arrival_departure_spinner"
-        android:layout_marginTop="@dimen/layout_vertical_spacing"
         android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/layout_vertical_spacing"
         android:text="@string/accept"/>
 
 </RelativeLayout>

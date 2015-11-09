@@ -1,6 +1,9 @@
 package org.feup.cmov.paintrain;
 
-import android.app.*;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.DialogFragment;
+import android.app.FragmentManager;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
@@ -115,7 +118,7 @@ public class TimetableFragment extends DrawerViewFragment {
             // Use the Builder class for convenient dialog construction
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             String[] tripsStr = new String[trips.length()];
-            for(int i=0;i<trips.length();i++) {
+            for (int i = 0; i < trips.length(); i++) {
                 try {
                     JSONObject trip = trips.getJSONObject(i);
                     String station = trip.getString("station");

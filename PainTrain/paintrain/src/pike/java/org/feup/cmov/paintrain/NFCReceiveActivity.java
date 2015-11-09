@@ -1,9 +1,9 @@
 package org.feup.cmov.paintrain;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.nfc.NdefMessage;
 import android.nfc.NfcAdapter;
-
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.widget.TextView;
@@ -26,7 +26,7 @@ public class NFCReceiveActivity extends Activity {
     }
 
     @Override
-    protected void onResume(){
+    protected void onResume() {
         super.onResume();
         Intent intent = getIntent();
         if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())) {
