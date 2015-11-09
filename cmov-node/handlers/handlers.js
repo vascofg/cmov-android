@@ -14,9 +14,7 @@ var ticketPrice = 1;
 exports.handlerTest = function (request, reply) {
     var userModel = request.server.plugins['hapi-sequelized'].db.sequelize.models.User;
 
-    userModel.findAll({
-
-    }).then(function (users) {
+    userModel.findAll({}).then(function (users) {
         users.forEach(function (user) {
             console.log(user.email);
             console.log(user.token);
@@ -26,14 +24,16 @@ exports.handlerTest = function (request, reply) {
 
 exports.ticketStatusHandler = function (request, reply) {
 
-    var status = request.payload;
+    var status = request.payload.data;
     var ticketModel = request.server.plugins['hapi-sequelized'].db.sequelize.models.Ticket;
 
     status.forEach(function (ticket) {
         //console.log(ticket.state);
 
         ticketModel.setTicketUsed(ticketModel, ticket);
-    })
+    });
+
+    reply().code(200);
 };
 
 exports.ticketsTripHandler = function (request, reply) {
@@ -225,7 +225,9 @@ exports.timetableHandler = function (request, reply) {
         }
 
 
-        return reply(times).code(200);
+        return reply({
+            data: times
+        }).code(200);
     });
 };
 
@@ -471,20 +473,23 @@ var createMultipleTickets = function (request, reply, currentTrip, currentStatio
         //console.log('signed', sig, '\n');
     }
 
-    reply([
-        {
-            ticket: firstTicket,
-            totalCost: tripCost,
-            firstStation: currentStationArray[0],
-            lastStation: currentStationArray[1]
-        },
-        {
-            ticket: secondTicket,
-            totalCost: tripCost,
-            firstStation: secondStationArray[0],
-            lastStation: secondStationArray[1]
-        }
-    ]).code(200);
+    reply({
+        data: [
+
+            {
+                ticket: firstTicket,
+                totalCost: tripCost,
+                firstStation: currentStationArray[0],
+                lastStation: currentStationArray[1]
+            },
+            {
+                ticket: secondTicket,
+                totalCost: tripCost,
+                firstStation: secondStationArray[0],
+                lastStation: secondStationArray[1]
+            }
+        ]
+    }).code(200);
 };
 
 
@@ -513,14 +518,16 @@ var createTicket = function (request, reply, currentTrip, firstStation, lastStat
         //console.log(encTicket);
         //console.log(dTicket);
 
-        reply([
-            {
-                ticket: encTicket,
-                totalCost: tripCost,
-                firstStation: firstStation,
-                lastStation: lastStation
-            }
-        ]).code(200);
+        reply({
+            data: [
+                {
+                    ticket: encTicket,
+                    totalCost: tripCost,
+                    firstStation: firstStation,
+                    lastStation: lastStation
+                }
+            ]
+        }).code(200);
     } else {
         reply().code(400);
     }
@@ -569,9 +576,9 @@ exports.payHandler = function (request, reply) {
             console.log(dTicket);
 
             ticketModel.createTicket(ticketModel, encTicket, email, tripID)._then(function (ticket) {
-               //console.log(ticket.state);
-               // console.log(ticket.UserEmail);
-               // console.log(ticket.TripId);
+                //console.log(ticket.state);
+                // console.log(ticket.UserEmail);
+                // console.log(ticket.TripId);
 
                 if (ticket) {
                     reply(encTicket).code(200);
