@@ -216,55 +216,110 @@ exports.getTicketHandler = function (request, reply) {
     var currentTrip = null;
     var currentTripTime = null;
     var currentStationArray = [];
+    var secondTrip = null;
+    var secondTripTime = null;
+    var secondStationArray = [];
     if (tripInitialTime != "" && tripInitialTime != null) {
-        tripModel.findTrip(tripModel, initialStation).then(function (trips) {
 
-            trips.forEach(function (trip) {
-                var stationArray = getTimeByStation(trip.times, initialStation, finalStation);
-                //console.log(station);
-                if (stationArray.length == 2) {
-                    var firstStation = stationArray[0];
-                    if (firstStation.station == initialStation && firstStation.time <= tripInitialTime) {
-                        if (currentTrip == null || currentTripTime < firstStation.time) {
-                            currentTrip = trip;
-                            currentTripTime = firstStation.time;
-                            currentStationArray[0] = stationArray[0];
-                            currentStationArray[1] = stationArray[1];
+        if ((initialInLineA && finalInLineA) || (!initialInLineA && !finalInLineA)) {
+            tripModel.findTrip(tripModel, initialStation).then(function (trips) {
+
+                trips.forEach(function (trip) {
+                    var stationArray = getTimeByStation(trip.times, initialStation, finalStation);
+                    //console.log(station);
+                    if (stationArray.length == 2) {
+                        var firstStation = stationArray[0];
+                        if (firstStation.station == initialStation && firstStation.time <= tripInitialTime) {
+                            if (currentTrip == null || currentTripTime < firstStation.time) {
+                                currentTrip = trip;
+                                currentTripTime = firstStation.time;
+                                currentStationArray[0] = stationArray[0];
+                                currentStationArray[1] = stationArray[1];
+                            }
                         }
                     }
-                }
-                //console.log(currentTrip);
+                    //console.log(currentTrip);
+                });
+                createTicket(request, reply, currentTrip, currentStationArray[0], currentStationArray[1], ticketCost);
             });
-            createTicket(request, reply, currentTrip, currentStationArray[0], currentStationArray[1], ticketCost);
-        });
+        } else {
+            tripModel.findTrip(tripModel, initialStation).then(function (trips) {
+
+                trips.forEach(function (trip) {
+                    var stationArray = getTimeByStation(trip.times, initialStation, "Central");
+                    //console.log(station);
+                    if (stationArray.length == 2) {
+                        var firstStation = stationArray[0];
+                        if (firstStation.station == initialStation && firstStation.time <= tripInitialTime) {
+                            if (currentTrip == null || currentTripTime < firstStation.time) {
+                                currentTrip = trip;
+                                currentTripTime = firstStation.time;
+                                currentStationArray[0] = stationArray[0];
+                                currentStationArray[1] = stationArray[1];
+                            }
+                        }
+                    }
+                    //console.log(currentTrip);
+                });
+
+                tripModel.findTrip(tripModel, "Central").then(function (trips) {
+
+                    trips.forEach(function (trip) {
+                        var stationArray = getTimeByStation(trip.times, "Central", finalStation);
+                        //console.log(station);
+                        if (stationArray.length == 2) {
+                            var firstStation = stationArray[0];
+                            if (firstStation.station == "Central" && firstStation.time > currentStationArray[1].time) {
+                                if (secondTrip == null || secondTripTime < firstStation.time) {
+                                    secondTrip = trip;
+                                    secondTripTime = firstStation.time;
+                                    secondStationArray[0] = stationArray[0];
+                                    secondStationArray[1] = stationArray[1];
+                                }
+                            }
+                        }
+                        //console.log(currentTrip);
+                    });
+
+                    //console.log(currentTrip);
+                    //console.log(secondTrip);
+                    //createTicket(request, reply, currentTrip, currentStationArray[0], currentStationArray[1], ticketCost);
+                });
+            });
+        }
     }
     else if (tripFinalTime != "" && tripFinalTime != null) {
-        tripModel.findTrip(tripModel, finalStation).then(function (trips) {
+        if ((initialInLineA && finalInLineA) || (!initialInLineA && !finalInLineA)) {
+            tripModel.findTrip(tripModel, finalStation).then(function (trips) {
 
-            trips.forEach(function (trip) {
-                var stationArray = getTimeByStation(trip.times, initialStation, finalStation);
-                //console.log(station);
+                trips.forEach(function (trip) {
+                    var stationArray = getTimeByStation(trip.times, initialStation, finalStation);
+                    //console.log(station);
 
-                if (stationArray.length == 2) {
-                    var lastStation = stationArray[1];
-                    console.log(stationArray);
-                    if (lastStation.station == finalStation && lastStation.time <= tripFinalTime) {
-                        if (currentTrip == null || currentTripTime < lastStation.time) {
-                            currentTrip = trip;
-                            currentTripTime = lastStation.time;
-                            currentStationArray[0] = stationArray[0];
-                            currentStationArray[1] = stationArray[1];
+                    if (stationArray.length == 2) {
+                        var lastStation = stationArray[1];
+                        console.log(stationArray);
+                        if (lastStation.station == finalStation && lastStation.time <= tripFinalTime) {
+                            if (currentTrip == null || currentTripTime < lastStation.time) {
+                                currentTrip = trip;
+                                currentTripTime = lastStation.time;
+                                currentStationArray[0] = stationArray[0];
+                                currentStationArray[1] = stationArray[1];
+                            }
                         }
                     }
-                }
 
-                console.log(currentTrip);
+                    console.log(currentTrip);
+                });
+
+                createTicket(request, reply, currentTrip, currentStationArray[0], currentStationArray[1], ticketCost);
             });
-
-            createTicket(request, reply, currentTrip, currentStationArray[0], currentStationArray[1], ticketCost);
-        });
+        } else {
+            if (initialInLineA) {
+            } else {
+            }
+        }
     }
-
 };
 
 var createTicket = function (request, reply, currentTrip, firstStation, lastStation, tripCost) {
