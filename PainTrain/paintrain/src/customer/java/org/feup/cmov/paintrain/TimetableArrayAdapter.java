@@ -38,7 +38,7 @@ public class TimetableArrayAdapter extends ArrayAdapter<JSONObject> {
 
 
         try {
-            JSONArray trips = getItem(position).getJSONArray("trips");
+            JSONArray trips = getItem(position).getJSONArray("times");
             JSONObject departureObj = trips.getJSONObject(0);
             JSONObject arrivalObj = trips.getJSONObject(trips.length()-1);
 
