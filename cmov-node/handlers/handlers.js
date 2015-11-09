@@ -155,12 +155,26 @@ exports.timetableHandler = function (request, reply) {
     });
 };
 
+function getTimeByStation(trip, initialStation, finalStation) {
+    return trip.filter(
+        function (trip) {
+            if (trip.station == initialStation || trip.station == finalStation) {
+                return trip.station;
+            }
+            return false;
+        }
+    );
+}
+
+
 exports.getTicketHandler = function (request, reply) {
 
     var tripModel = request.server.plugins['hapi-sequelized'].db.sequelize.models.Trip;
 
     var initialStation = request.payload.initialStation;
     var finalStation = request.payload.finalStation;
+    var tripInitialTime = request.payload.tripInitialTime;
+    var tripFinalTime = "";
     var tripId = request.payload.trip;
 
     //console.log(initialStation);
@@ -190,19 +204,39 @@ exports.getTicketHandler = function (request, reply) {
         nStations = indexFinal - indexInitial;
     } else {
         if (initialInLineA) {
-            nStations = Math.abs(indexInitial-centralIndex) + indexFinal;
+            nStations = Math.abs(indexInitial - centralIndex) + indexFinal;
         } else {
-            nStations = indexInitial + Math.abs(indexFinal-centralIndex);
+            nStations = indexInitial + Math.abs(indexFinal - centralIndex);
         }
     }
 
     var ticketCost = nStations * ticketPrice;
 
-    tripModel.findTrip(tripModel, initialStation).then(function (stations) {
-        console.log(stations);
-    })
+    var currentTrip = null;
+    var currentTripTime = null;
+    if (tripInitialTime != "" && tripInitialTime != null) {
+        tripModel.findTrip(tripModel, initialStation).then(function (trips) {
 
-    reply(nStations);
+            trips.forEach(function (trip) {
+                var stationArray = getTimeByStation(trip.times, initialStation, finalStation);
+                //console.log(station);
+                var firstStation = stationArray[0];
+                if (firstStation.station == initialStation && firstStation.time <= tripInitialTime) {
+                    if (currentTrip == null || currentTripTime < firstStation.time) {
+                        currentTrip = trip;
+                        currentTripTime = firstStation.time;
+                    }
+                }
+
+                //console.log(currentTrip);
+            });
+        });
+    }
+    else if (tripFinalTime != "" && tripFinalTime != null) {
+
+    }
+
+    reply(ticketCost);
 
 
     //console.log('Encrypt with Alice Public; Sign with Bob Private');

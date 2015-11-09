@@ -27,11 +27,14 @@ module.exports = function (sequelize, DataTypes) {
                     Trip.hasMany(models.Ticket);
                 },
                 findTrip: function (tripModel, initialStation) {
-                    return tripModel.find({
-                        where: {
-                            times: $contains
-                        }
-                    });
+
+                    return sequelize.query("select * from trip where times @> '[{\"station\":\"" + initialStation + "\"}]'",
+                        { type: sequelize.QueryTypes.SELECT});
+                },
+                findTripWithStartTime: function (tripModel, initialStation, time) {
+
+                    return sequelize.query("select * from trip where times @> '[{\"station\":\"" + initialStation + "\", \"time\" < \"12:00\"}]'",
+                        { type: sequelize.QueryTypes.SELECT});
                 },
                 addTrips: function (tripModel) {
                     tripModel.bulkCreate([
@@ -143,8 +146,6 @@ module.exports = function (sequelize, DataTypes) {
             timestamps: false
         }
     );
-    //
-    //Trip.hasMany(Ticket);
 
     return Trip;
 };
