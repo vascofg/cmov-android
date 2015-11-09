@@ -228,26 +228,25 @@ public class AuthActivity extends Activity implements
 
         try {
             jo.put("googleCredentials", token);
-            jo.put("pike", false);
+            jo.put("pike", getResources().getString(R.string.role).equals("Pike"));
+            JsonObjectRequest jsonObjectRequest = new JsonObjectRequestFixed(Request.Method.POST, url, jo, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject jsonObject) {
+                    Toast.makeText(getBaseContext(),"Success authing with server!",Toast.LENGTH_LONG).show();
+                    Log.d(TAG,jsonObject.toString());
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(getBaseContext(),"Error authing with server",Toast.LENGTH_LONG).show();
+                    Log.e(TAG, error.toString());
+                }
+            });
+
+            queue.add(jsonObjectRequest);
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, jo, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject jsonObject) {
-                Toast.makeText(getBaseContext(),"Success authing with server!",Toast.LENGTH_LONG).show();
-                Log.d(TAG,jsonObject.toString());
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getBaseContext(),"Error authing with server",Toast.LENGTH_LONG).show();
-                Log.e(TAG, "VOLLEY: " + error.toString());
-            }
-        });
-
-        queue.add(jsonObjectRequest);
     }
 
     private class GetIdTokenTask extends AsyncTask<String, Void, String> {

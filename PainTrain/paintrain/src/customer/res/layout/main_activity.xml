@@ -15,7 +15,6 @@
         android:id="@+id/buy_tickets_button_main"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/auth_button_main"
         android:text="@string/buy_tickets"
         android:onClick="launchBuyTickets"/>
 
@@ -23,7 +22,6 @@
         android:id="@+id/timetable_button_main"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/buy_tickets_button_main"
         android:text="@string/timetable"
         android:onClick="launchTimetable"/>
 
@@ -31,7 +29,13 @@
         android:id="@+id/nfc_button_main"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/timetable_button_main"
         android:text="@string/nfc"
         android:onClick="launchNFC"/>
+
+    <Button
+        android:id="@+id/qrcode_button_main"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/qrcode"
+        android:onClick="showQRCode"/>
 </LinearLayout>

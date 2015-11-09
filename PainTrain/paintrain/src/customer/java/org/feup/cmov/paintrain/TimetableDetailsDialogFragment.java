@@ -30,7 +30,7 @@ public class TimetableDetailsDialogFragment extends DialogFragment {
         super.onCreateDialog(savedInstanceState);
         JSONArray trips;
         try {
-            trips = new JSONObject(getArguments().getString("trips")).getJSONArray("trips");
+            trips = new JSONObject(getArguments().getString("trips")).getJSONArray("times");
         } catch (JSONException e) {
             throw new RuntimeException("JSON Error");
         }
