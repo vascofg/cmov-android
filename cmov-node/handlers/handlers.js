@@ -374,7 +374,8 @@ var createMultipleTickets = function (request, reply, currentTrip, currentStatio
     if (currentTrip != null) {
 
         var ticket = "id:" + currentTrip.id + "--email:" + request.auth.credentials.email + "--firstStation:" + currentStationArray[0].station +
-            "--time:" + currentStationArray[0].time + "--price:" + tripCost + "--random:" + Math.random();
+            "--time:" + currentStationArray[0].time + "--lastStation:" + secondStationArray[1].station +
+            "--lastTime:" + secondStationArray[1].time + "--price:" + tripCost + "--random:" + Math.random();
 
 
         //console.log('Encrypt with Alice Public; Sign with Bob Private');
@@ -387,7 +388,8 @@ var createMultipleTickets = function (request, reply, currentTrip, currentStatio
     if (secondTrip != null) {
 
         var ticket = "id:" + secondTrip.id + "--email:" + request.auth.credentials.email + "--firstStation:" + secondStationArray[0].station +
-            "--time:" + secondStationArray[0].time + "--price:" + tripCost + "--random:" + Math.random();
+            "--firstTime:" + secondStationArray[0].time + "--lastStation:" + secondStationArray[1].station +
+            "--lastTime:" + secondStationArray[1].time + "--price:" + tripCost + "--random:" + Math.random();
 
 
         //console.log('Encrypt with Alice Public; Sign with Bob Private');
@@ -419,7 +421,8 @@ var createTicket = function (request, reply, currentTrip, firstStation, lastStat
     if (currentTrip != null) {
 
         var ticket = "id:" + currentTrip.id + "--email:" + request.auth.credentials.email + "--firstStation:" + firstStation.station +
-            "--time:" + firstStation.time + "--price:" + tripCost + "--random:" + Math.random();
+            "--firstTime:" + firstStation.time + "--lastStation:" + lastStation.station +
+            "--lastTime:" + lastStation.time + "--price:" + tripCost + "--random:" + Math.random();
         //ticket.trip = currentTrip;
         //ticket.firstStation = firstStation;
         //ticket.lastStation = lastStation;
