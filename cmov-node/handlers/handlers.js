@@ -44,7 +44,7 @@ exports.authHandler = function (request, reply) {
                 var authToken = credentials;
                 var expire = bodyJson.exp;
 
-                var pike = (request.payload.pike.toLowerCase() === "true");
+                var pike = request.payload.pike;
 
                 //console.log(email);
                 //console.log(pike);
@@ -54,22 +54,22 @@ exports.authHandler = function (request, reply) {
                 if (pike) {
                     models.Pike.addNewPike(models.Pike, email, name, authToken, expire).then(function (user) {
                             //console.log(user);
-                            return reply("Ok").code(200);
+                            return reply().code(200);
                         })
                         .catch(function (error) {
                             console.log(error);
-                            return reply("Error")
+                            return reply()
                                 .code(400);
                         });
                 } else {
                     models.User.addNewUser(models.User, email, name, authToken, expire).then(function (user) {
                             //console.log(user);
-                            return reply("Ok")
+                            return reply()
                                 .code(200);
                         })
                         .catch(function (error) {
                             console.log(error);
-                            return reply("Error")
+                            return reply()
                                 .code(400);
                         });
                 }
@@ -77,7 +77,7 @@ exports.authHandler = function (request, reply) {
 
                 //}
             } else if (res.statusCode == 400) {
-                return reply("Unauthorized").code(403);
+                return reply().code(403);
             }
         });
     });
@@ -105,15 +105,15 @@ exports.updateHandler = function (request, reply) {
                         //console.log(updatedUser);
 
                         if (updatedUser) {
-                            return reply("Ok").code(200);
+                            return reply().code(200);
                         }
                         else
-                            return reply("error").code(400);
+                            return reply().code(400);
                     })
                     .catch(function (erro) {
                         //console.log("olha o erro bom");
                         console.log(erro);
-                        return reply("Internal error - database").code(400);
+                        return reply().code(400);
                     });
             });
 
