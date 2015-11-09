@@ -581,7 +581,9 @@ exports.payHandler = function (request, reply) {
                 // console.log(ticket.TripId);
 
                 if (ticket) {
-                    reply(encTicket).code(200);
+                    reply({
+                        data : encTicket
+                    }).code(200);
                 } else {
                     reply("Internal Error").code(400);
                 }
