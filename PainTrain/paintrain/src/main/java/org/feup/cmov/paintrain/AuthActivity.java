@@ -229,7 +229,7 @@ public class AuthActivity extends Activity implements
         try {
             jo.put("googleCredentials", token);
             jo.put("pike", getResources().getString(R.string.role).equals("Pike"));
-            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, jo, new Response.Listener<JSONObject>() {
+            JsonObjectRequest jsonObjectRequest = new JsonObjectRequestFixed(Request.Method.POST, url, jo, new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject jsonObject) {
                     Toast.makeText(getBaseContext(),"Success authing with server!",Toast.LENGTH_LONG).show();
