@@ -2,11 +2,15 @@ module.exports = function(sequelize, DataTypes) {
     var Ticket = sequelize.define(
         'Ticket',
         {
-            id: {
-                type: DataTypes.STRING,
+            ticketEnc: {
+                type: DataTypes.TEXT,
                 unique: true,
                 allowNull: false,
                 primaryKey: true
+            },
+            state: {
+                type: DataTypes.TEXT,
+                allowNull: false
             }
         },
         {
@@ -14,6 +18,21 @@ module.exports = function(sequelize, DataTypes) {
                 associate: function (models) {
                     Ticket.belongsTo(models.User);
                     Ticket.belongsTo(models.Trip);
+                },
+                createTicket: function (ticketModel, ticket, email, tripID) {
+                    return ticketModel.create({
+                        ticketEnc: ticket,
+                        UserEmail: email,
+                        TripId: tripID,
+                        state: "not used"
+                    });
+                },
+                findAllTicketFromUser: function (ticketModel, email) {
+                    return ticketModel.findAll({
+                        where: {
+                            UserEmail: email
+                        }
+                    });
                 }
             },
             tableName: 'ticket',

@@ -45,15 +45,22 @@ module.exports = function (sequelize, DataTypes) {
                     });
                 },
                 addNewUser: function (userModel, email, name, authToken, expire) {
-                    return userModel.findOrCreate({
-                        where: {
-                            email: email
-                        }, defaults: {
-                            name: name,
-                            token: authToken,
-                            expireTime: expire
-                        }
+                    return userModel.upsert({
+                        email: email,
+                        name: name,
+                        token:authToken,
+                        expireTime: expire
                     });
+
+                    //return userModel.findOrCreate({
+                    //    where: {
+                    //        email: email
+                    //    }, defaults: {
+                    //        name: name,
+                    //        token: authToken,
+                    //        expireTime: expire
+                    //    }
+                    //});
                 },
                 findUserWithToken: function (userModel, token) {
                     return userModel.findOne({
