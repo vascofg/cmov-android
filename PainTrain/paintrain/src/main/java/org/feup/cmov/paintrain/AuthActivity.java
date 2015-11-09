@@ -166,7 +166,7 @@ public class AuthActivity extends Activity implements
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.auth, menu);
 
         mActionConnect = menu.findItem(R.id.action_connect);
         mActionDisconnect = menu.findItem(R.id.action_disconnect);

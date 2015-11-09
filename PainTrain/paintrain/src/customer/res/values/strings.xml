@@ -1,10 +1,14 @@
 <resources>
     <string name="app_name">Pain Train</string>
+    <string-array name="titles">
+        <item>Buy tickets</item>
+        <item>Timetable</item>
+    </string-array>
 
     <string name="role">Customer</string>
 
-    <string name="nfc">NFC</string>
-
-    <string name="buy_tickets">Buy tickets</string>
-    <string name="timetable">Timetable</string>
+    <string-array name="arrival_departure_array">
+        <item>Arrival</item>
+        <item>Departure</item>
+    </string-array>
 </resources>

@@ -1,25 +1,22 @@
 package org.feup.cmov.paintrain;
 
+import android.app.ActionBar;
 import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.widget.Toast;
+import android.support.v4.widget.DrawerLayout;
+import android.view.*;
 
-/**
- * Created by vascofg on 31-10-2015.
- */
+import java.lang.reflect.Method;
+
+
 public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main_activity);
-    }
-
-    public void launchAuth(View view) {
-        startActivity(new Intent(this, AuthActivity.class));
     }
 
     public void readQRCode(View view) {
@@ -39,22 +36,4 @@ public class MainActivity extends Activity {
 
         }
     }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 0) {
-
-                if (resultCode == RESULT_OK) {
-                String contents = data.getStringExtra("SCAN_RESULT");
-                Log.d("QRCode", contents);
-                Toast.makeText(getBaseContext(),contents,Toast.LENGTH_LONG).show();
-            }
-            if(resultCode == RESULT_CANCELED){
-                Log.d("QRCode", "Canceled");
-                Toast.makeText(getBaseContext(),"Canceled",Toast.LENGTH_LONG).show();
-            }
-        }
-    }
-
 }

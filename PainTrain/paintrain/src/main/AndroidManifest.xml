@@ -32,26 +32,6 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:name=".BuyTicketsActivity"
-            android:label="@string/app_name" >
-            <intent-filter>
-                <action android:name="org.feup.cmov.paintrain.buy_tickets" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-
-        <activity
-            android:name=".TimetableActivity"
-            android:label="@string/app_name" >
-            <intent-filter>
-                <action android:name="org.feup.cmov.paintrain.timetable" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-
     </application>
 
 </manifest>
