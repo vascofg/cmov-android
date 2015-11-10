@@ -13,6 +13,7 @@ import android.util.Log;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.auth.GoogleAuthException;
@@ -153,7 +154,12 @@ public class AuthActivity extends Activity implements GoogleApiClient.Connection
                 public void onResponse(JSONObject jsonObject) {
                     connectionSuccess();
                 }
-            }, this);
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError volleyError) {
+                    connectionFailed(volleyError.toString());
+                }
+            },this);
             queue.add(jsonObjectRequest);
         } catch (JSONException e) {
             connectionFailed(e.toString());

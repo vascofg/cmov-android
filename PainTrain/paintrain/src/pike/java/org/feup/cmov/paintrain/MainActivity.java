@@ -70,12 +70,11 @@ public class MainActivity extends Activity {
     }
 
     private static String Decrypt(String message, PrivateKey key) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException, UnsupportedEncodingException {
-        String result = null;
-        Cipher cipher = Cipher.getInstance("RSA");
+        Cipher cipher = Cipher.getInstance("RSA/NONE/OAEPPadding");
         cipher.init(Cipher.DECRYPT_MODE, key);
         byte[] decryptedText = cipher.doFinal(Base64.decode(message, Base64.DEFAULT));
         Log.d(TAG, "Decrypted " + decryptedText.length + " bytes");
-        result = new String(decryptedText, "UTF-8");
+        String result = new String(decryptedText, "UTF-8");
         return result;
     }
 
@@ -192,7 +191,14 @@ public class MainActivity extends Activity {
             //QR CODE SCAN
             if (resultCode == RESULT_OK) {
                 String contents = data.getStringExtra("SCAN_RESULT");
-                validateTicket(contents);
+                if(validateTicket(contents)) {
+                    Log.d(TAG, "Valid ticket!");
+                    Toast.makeText(MainActivity.this, "Valid ticket!", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    Log.d(TAG, "Invalid ticket!");
+                    Toast.makeText(MainActivity.this, "Invalid ticket!", Toast.LENGTH_SHORT).show();
+                }
             }
             if (resultCode == RESULT_CANCELED) {
                 Log.d(TAG, "Scan canceled");
@@ -227,12 +233,24 @@ public class MainActivity extends Activity {
         }
     }
 
-    private boolean validateTicket(String ticket) {
-        Log.d(TAG, ticket);
+    private boolean validateTicket(String ticketsStr) {
+        Log.d(TAG, ticketsStr);
+        boolean valid = true;
         try {
-            JSONObject ticketObj = new JSONObject(ticket);
-            String ticketDecrypted = MainActivity.Decrypt(ticketObj.getString("ticket"), privKey);
-            Log.d(TAG, ticketDecrypted);
+            JSONArray tickets = new JSONArray(ticketsStr);
+            for(int i=0;i<tickets.length();i++) {
+                String ticket = tickets.getString(i);
+                Log.d(TAG, "Unencrypting ticket #" + i + ": " + ticket);
+                String ticketDecrypted = MainActivity.Decrypt(ticket, privKey);
+                Log.d(TAG, ticketDecrypted);
+                String[] params = ticketDecrypted.split("--");
+                for(String param:params)
+                    Log.d(TAG, param);
+                boolean paid = params[params.length-1].equals("paid");
+                if(!paid)
+                    valid=false;
+            }
+            return valid;
             //TODO: compare stations
         } catch (JSONException e) {
             e.printStackTrace();
@@ -248,8 +266,7 @@ public class MainActivity extends Activity {
             e.printStackTrace();
         } catch (InvalidKeyException e) {
             e.printStackTrace();
-        } finally {
-            return false;
         }
+        return false;
     }
 }

@@ -24,9 +24,28 @@ public class InsecureJsonObjectRequest extends JsonObjectRequest {
 
     public InsecureJsonObjectRequest(int method,
                                      String url,
+                                     JSONObject jsonRequest,
+                                     Response.Listener<JSONObject> listener,
+                                     Response.ErrorListener errorListener,
+                                     Activity activity) {
+        super(method, url, jsonRequest, listener, errorListener);
+        this.activity = activity;
+    }
+
+    public InsecureJsonObjectRequest(int method,
+                                     String url,
                                      Response.Listener<JSONObject> listener,
                                      Activity activity) {
         super(method, url, listener, new CustomErrorListener(activity));
+        this.activity = activity;
+    }
+
+    public InsecureJsonObjectRequest(int method,
+                                     String url,
+                                     Response.Listener<JSONObject> listener,
+                                     Response.ErrorListener errorListener,
+                                     Activity activity) {
+        super(method, url, listener, errorListener);
         this.activity = activity;
     }
 

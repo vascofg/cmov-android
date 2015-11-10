@@ -176,7 +176,9 @@ public class BuyTicketsFragment extends DrawerViewFragment implements TimePicker
 
                         //combined tickets array
                         JSONArray finalTicketsArray = new JSONArray();
-                        finalTicketsArray.put(newDepartureTicket);
+                        if(newTickets.length()>1) {
+                            finalTicketsArray.put(newDepartureTicket);
+                        }
                         finalTicketsArray.put(newArrivalTicket);
 
                         JSONObject finalTicket = new JSONObject();
