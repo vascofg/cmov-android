@@ -49,6 +49,39 @@ module.exports = [
     },
     {
         method: 'GET',
+        path: '/test',
+        handler: function (request, reply) {
+            handlers.handlerTest(request, reply);
+        }
+    },
+    {
+        method: 'GET',
+        path: '/ticketsTrip/{trip}',
+        handler: function (request, reply) {
+            handlers.ticketsTripHandler(request, reply);
+        },
+        config: {
+            auth: {
+                strategy: 'pikeAuth'
+                //scope: 'user' // or [ 'user', 'admin' ]
+            }
+        }
+    },
+    {
+        method: 'POST',
+        path: '/ticketStatus',
+        handler: function (request, reply) {
+            handlers.ticketStatusHandler(request, reply);
+        },
+        config: {
+            auth: {
+                strategy: 'pikeAuth'
+                //scope: 'user' // or [ 'user', 'admin' ]
+            }
+        }
+    },
+    {
+        method: 'GET',
         path: '/timetable',
         handler: function (request, reply) {
             handlers.timetableHandler(request, reply);

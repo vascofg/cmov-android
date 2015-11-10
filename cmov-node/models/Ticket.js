@@ -33,6 +33,23 @@ module.exports = function(sequelize, DataTypes) {
                             UserEmail: email
                         }
                     });
+                },
+                findAllTicketFromTrip: function (ticketModel, tripID) {
+                    return ticketModel.findAll({
+                       where: {
+                           TripId: tripID
+                       }
+                    });
+                },
+                setTicketUsed: function (ticketModel, ticket) {
+
+                    ticketModel.find({
+                        ticketEnc: ticket
+                    }).then( function (oldTicket) {
+                        oldTicket.update({
+                            state: "used"
+                        });
+                    });
                 }
             },
             tableName: 'ticket',

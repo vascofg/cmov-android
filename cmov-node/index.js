@@ -61,14 +61,14 @@ var validateUser = function (token, request, callback) {
                 callback(null, true, user.dataValues);
             } else {
                 console.log("INVALID TOKEN");
-                callback({Error: "Invalid token"}, false, null);
+                callback(/*{Error: "Invalid token"}*/null, false, null);
             }
         })
         .catch(function (error) {
             console.log(error);
             console.log("ERROR IN DATABASE");
 
-            callback({Error: "Internal Error - user not found"}, false, null);
+            callback(/*{Error: "Internal Error - user not found"}*/null, false, null);
         });
 };
 
@@ -86,14 +86,14 @@ var validatePike = function (token, request, callback) {
                 callback(null, true, user.dataValues);
             } else {
                 console.log("INVALID TOKEN");
-                callback({Error: "Invalid token"}, false, null);
+                callback(/*{Error: "Invalid token"}*/null, false, null);
             }
         })
         .catch(function (error) {
             console.log(error);
             console.log("ERROR IN DATABASE");
 
-            callback({Error: "Internal Error - user not found"}, false, null);
+            callback(/*{Error: "Internal Error - user not found"}*/null, false, null);
         });
 };
 
@@ -115,6 +115,11 @@ Glue.compose(manifest, options, function (err, server) {
 
     server.auth.strategy('userAuth', 'bearerAuth', {
         validateFunction: validateUser,
+        exposeRequest: true
+    });
+
+    server.auth.strategy('pikeAuth', 'bearerAuth', {
+        validateFunction: validatePike,
         exposeRequest: true
     });
 

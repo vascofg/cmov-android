@@ -2,7 +2,7 @@ var https = require('https');
 var fs = require('fs');
 var ursa = require('ursa');
 
-var privKeyNode = ursa.createPrivateKey(fs.readFileSync('./nodeKeys/privkey.pem'));
+//var privKeyNode = ursa.createPrivateKey(fs.readFileSync('./nodeKeys/privkey.pem'));
 var pubkeyAndroid = ursa.createPublicKey(fs.readFileSync('./androidKeys/pubkey.pem'));
 var privkeyAndroid = ursa.createPrivateKey(fs.readFileSync('./androidKeys/privkey.pem'));
 
@@ -10,6 +10,57 @@ var ticketPrice = 1;
 
 //var privkeyAndroid = ursa.createPrivateKey(fs.readFileSync('./androidKeys/privkey.pem'));
 //var pubkeyNode = ursa.createPublicKey(fs.readFileSync('./nodeKeys/pubkey.pem'));
+
+exports.handlerTest = function (request, reply) {
+    var userModel = request.server.plugins['hapi-sequelized'].db.sequelize.models.User;
+
+    userModel.findAll({}).then(function (users) {
+        users.forEach(function (user) {
+            console.log(user.email);
+            console.log(user.token);
+        })
+    })
+};
+
+exports.ticketStatusHandler = function (request, reply) {
+
+    var status = request.payload.data;
+    var ticketModel = request.server.plugins['hapi-sequelized'].db.sequelize.models.Ticket;
+
+    status.forEach(function (ticket) {
+        //console.log(ticket.state);
+
+        ticketModel.setTicketUsed(ticketModel, ticket);
+    });
+
+    reply().code(200);
+};
+
+exports.ticketsTripHandler = function (request, reply) {
+    //var pike = request.auth.credentials;
+    var tripID = request.params.trip;
+    var ticketModel = request.server.plugins['hapi-sequelized'].db.sequelize.models.Ticket;
+
+    if (tripID != null) {
+        ticketModel.findAllTicketFromTrip(ticketModel, tripID).then(function (tickets) {
+
+            var ticketsArray = [];
+            if (tickets) {
+                tickets.forEach(function (ticket) {
+                    var ticketsJson = {};
+                    ticketsJson.ticket = ticket.ticketEnc;
+                    ticketsJson.state = ticket.state;
+
+                    ticketsArray.push(ticketsJson);
+                });
+            }
+
+            reply(ticketsArray).code(200);
+        });
+    } else {
+        reply("Error in database").code(400);
+    }
+};
 
 exports.ticketsHandler = function (request, reply) {
     var user = request.auth.credentials;
@@ -73,7 +124,8 @@ exports.authHandler = function (request, reply) {
                 var models = request.server.plugins['hapi-sequelized'].db.sequelize.models;
 
                 console.log(pike);
-                if (pike !== 'false') {
+                //if (pike !== 'false') {
+                if (pike) {
                     models.Pike.addNewPike(models.Pike, email, name, authToken, expire).then(function (user) {
                             //console.log(user);
                             return reply().code(200);
@@ -173,7 +225,9 @@ exports.timetableHandler = function (request, reply) {
         }
 
 
-        return reply(times).code(200);
+        return reply({
+            data: times
+        }).code(200);
     });
 };
 
@@ -419,20 +473,23 @@ var createMultipleTickets = function (request, reply, currentTrip, currentStatio
         //console.log('signed', sig, '\n');
     }
 
-    reply([
-        {
-            ticket: firstTicket,
-            totalCost: tripCost,
-            firstStation: currentStationArray[0],
-            lastStation: currentStationArray[1]
-        },
-        {
-            ticket: secondTicket,
-            totalCost: tripCost,
-            firstStation: secondStationArray[0],
-            lastStation: secondStationArray[1]
-        }
-    ]).code(200);
+    reply({
+        data: [
+
+            {
+                ticket: firstTicket,
+                totalCost: tripCost,
+                firstStation: currentStationArray[0],
+                lastStation: currentStationArray[1]
+            },
+            {
+                ticket: secondTicket,
+                totalCost: tripCost,
+                firstStation: secondStationArray[0],
+                lastStation: secondStationArray[1]
+            }
+        ]
+    }).code(200);
 };
 
 
@@ -461,14 +518,16 @@ var createTicket = function (request, reply, currentTrip, firstStation, lastStat
         //console.log(encTicket);
         //console.log(dTicket);
 
-        reply([
-            {
-                ticket: encTicket,
-                totalCost: tripCost,
-                firstStation: firstStation,
-                lastStation: lastStation
-            }
-        ]).code(200);
+        reply({
+            data: [
+                {
+                    ticket: encTicket,
+                    totalCost: tripCost,
+                    firstStation: firstStation,
+                    lastStation: lastStation
+                }
+            ]
+        }).code(200);
     } else {
         reply().code(400);
     }
@@ -492,7 +551,7 @@ exports.payHandler = function (request, reply) {
     console.log(currentMonth);
     console.log(currentYear);
 
-    if (user.card != null && ((cardYear > currentYear) || (cardYear == currentYear && cardMonth >= currentMonth))) {
+    //if (user.card != null && ((cardYear > currentYear) || (cardYear == currentYear && cardMonth >= currentMonth))) {
 
         var ticket = privkeyAndroid.decrypt(encryptedTicket, 'base64', 'utf8');
 
@@ -508,23 +567,33 @@ exports.payHandler = function (request, reply) {
 
             var ticketModel = models.Ticket;
 
-            ticketModel.createTicket(ticketModel, encryptedTicket, email, tripID)._then(function (ticket) {
-               //console.log(ticket.state);
-               // console.log(ticket.UserEmail);
-               // console.log(ticket.TripId);
+            ticket = ticket + "--paid";
+
+            var encTicket = pubkeyAndroid.encrypt(ticket, 'utf8', 'base64');
+            var dTicket = privkeyAndroid.decrypt(encTicket, 'base64', 'utf8');
+
+            console.log(ticket);
+            console.log(dTicket);
+
+            ticketModel.createTicket(ticketModel, encTicket, email, tripID)._then(function (ticket) {
+                //console.log(ticket.state);
+                // console.log(ticket.UserEmail);
+                // console.log(ticket.TripId);
 
                 if (ticket) {
-                    reply().code(200);
+                    reply({
+                        data : encTicket
+                    }).code(200);
                 } else {
                     reply("Internal Error").code(400);
                 }
             });
         }
 
-    } else {
-
-        reply("Invalid Card Info").code(400);
-    }
+    //} else {
+    //
+    //    reply("Invalid Card Info").code(400);
+    //}
 };
 
 
