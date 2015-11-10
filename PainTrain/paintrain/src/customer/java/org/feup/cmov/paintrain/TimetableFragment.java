@@ -1,10 +1,6 @@
 package org.feup.cmov.paintrain;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.DialogFragment;
-import android.app.FragmentManager;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,12 +8,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -57,11 +51,11 @@ public class TimetableFragment extends DrawerViewFragment {
         String url = getResources().getString(R.string.base_url) + "/timetable";
 
         // Request a JSON response from the provided URL.
-        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url,
-                new Response.Listener<JSONArray>() {
+        JsonObjectRequest jsonObjectRequest = new InsecureJsonObjectRequest(Request.Method.GET, url,
+                new Response.Listener<JSONObject>() {
                     @Override
-                    public void onResponse(JSONArray jsonArray) {
-                        Log.d(TAG, jsonArray.toString());
+                    public void onResponse(JSONObject jsonObject) {
+                        Log.d(TAG, jsonObject.toString());
                         /*getListView().setAdapter(new JSONArrayAdapter(getBaseContext(),
                                 jsonArray,                                                   // JSONArray data
                                 R.layout.timetable_row,                    // a layout resource to display a row
@@ -69,10 +63,11 @@ public class TimetableFragment extends DrawerViewFragment {
                                 new int[] {R.id.timetable_row_departure, R.id.timetable_row_departure_time, R.id.timetable_row_arrival, R.id.timetable_row_arrival_time},     // corresponding View ids to map field names to
                                 "id" ));*/
                         try {
-                            if (jsonArray != null) {
-                                mItems = new ArrayList<JSONObject>(jsonArray.length());
-                                for (int i = 0; i < jsonArray.length(); i++) {
-                                    mItems.add(jsonArray.getJSONObject(i));
+                            if (jsonObject != null) {
+                                JSONArray data = jsonObject.getJSONArray("data");
+                                mItems = new ArrayList<JSONObject>(data.length());
+                                for (int i = 0; i < data.length(); i++) {
+                                    mItems.add(data.getJSONObject(i));
                                 }
                                 mListView.setAdapter(new TimetableArrayAdapter(getActivity(), mItems));
                             }
@@ -80,69 +75,12 @@ public class TimetableFragment extends DrawerViewFragment {
                             e.printStackTrace();
                         }
                     }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getActivity(), "Error getting timetable", Toast.LENGTH_LONG).show();
-                Log.e(TAG, "VOLLEY: " + error.getMessage());
-            }
-        });
+                }, getActivity());
 // Add the request to the RequestQueue.
-        queue.add(jsonArrayRequest);
+        queue.add(jsonObjectRequest);
 
         return rootView;
     }
 
-    public static class TimetableDetailsDialogFragment extends DialogFragment {
 
-        public static TimetableDetailsDialogFragment newInstance(String trips) {
-            TimetableDetailsDialogFragment f = new TimetableDetailsDialogFragment();
-
-            // Supply input as an argument.
-            Bundle args = new Bundle();
-            args.putString("trips", trips);
-            f.setArguments(args);
-
-            return f;
-        }
-
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            super.onCreateDialog(savedInstanceState);
-            JSONArray trips;
-            try {
-                trips = new JSONObject(getArguments().getString("trips")).getJSONArray("times");
-            } catch (JSONException e) {
-                throw new RuntimeException("JSON Error");
-            }
-            // Use the Builder class for convenient dialog construction
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            String[] tripsStr = new String[trips.length()];
-            for (int i = 0; i < trips.length(); i++) {
-                try {
-                    JSONObject trip = trips.getJSONObject(i);
-                    String station = trip.getString("station");
-                    String time = trip.getString("time");
-                    tripsStr[i] = time + ": " + station;
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-            builder.setItems(tripsStr, null)
-                    .setNegativeButton("Dismiss", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            dialog.dismiss();
-                        }
-                    });
-            // Create the AlertDialog object and return it
-            return builder.create();
-        }
-
-        @Override
-        public void show(FragmentManager manager, String tag) {
-            if (manager.findFragmentByTag(tag) == null) {
-                super.show(manager, tag);
-            }
-        }
-    }
 }

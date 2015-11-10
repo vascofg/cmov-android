@@ -1,0 +1,40 @@
+package org.feup.cmov.paintrain;
+
+import android.app.Activity;
+import android.util.Log;
+import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.Toast;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+
+import java.net.HttpURLConnection;
+
+/**
+ * Created by vascofg on 09-11-2015.
+ */
+public class CustomErrorListener implements Response.ErrorListener {
+
+    private Activity activity;
+    private ProgressBar progress;
+
+    public CustomErrorListener(Activity activity) {
+        this.activity = activity;
+        this.progress = (ProgressBar) activity.findViewById(R.id.progress_bar);
+    }
+
+    @Override
+    public void onErrorResponse(VolleyError volleyError) {
+        try {
+            if (volleyError.networkResponse.statusCode == HttpURLConnection.HTTP_UNAUTHORIZED) {
+                ((MainActivity) activity).connectAndAuth();
+            }
+        } catch (NullPointerException e) {
+        }
+
+        Log.e("VOLLEY", volleyError.toString());
+        Toast.makeText(activity, R.string.connection_error, Toast.LENGTH_LONG).show();
+        if (progress != null)
+            progress.setVisibility(View.INVISIBLE);
+    }
+}

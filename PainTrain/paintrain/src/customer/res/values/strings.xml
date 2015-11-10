@@ -3,6 +3,7 @@
     <string-array name="titles">
         <item>Buy tickets</item>
         <item>Timetable</item>
+        <item>My Tickets</item>
     </string-array>
 
     <string name="role">Customer</string>

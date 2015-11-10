@@ -6,20 +6,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.List;
 
 /**
- * Created by vascofg on 04-11-2015.
+ * Created by vascofg on 09-11-2015.
  */
-public class TimetableArrayAdapter extends ArrayAdapter<JSONObject> {
+public class MyTicketsArrayAdapter extends ArrayAdapter<JSONObject> {
 
     private final Context context;
 
-    public TimetableArrayAdapter(Context context, List<JSONObject> values) {
+    public MyTicketsArrayAdapter(Context context, List<JSONObject> values) {
         super(context, -1, values);
         this.context = context;
     }
@@ -37,9 +36,9 @@ public class TimetableArrayAdapter extends ArrayAdapter<JSONObject> {
 
 
         try {
-            JSONArray trips = getItem(position).getJSONArray("times");
-            JSONObject departureObj = trips.getJSONObject(0);
-            JSONObject arrivalObj = trips.getJSONObject(trips.length() - 1);
+            JSONObject ticket = getItem(position);
+            JSONObject departureObj = ticket.getJSONObject("firstStation");
+            JSONObject arrivalObj = ticket.getJSONObject("lastStation");
 
             departure.setText(departureObj.getString("station"));
             departureTime.setText(departureObj.getString("time"));
