@@ -30,11 +30,11 @@ public class BuyTicketDialogFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         super.onCreateDialog(savedInstanceState);
-        final JSONArray tickets;
         // Use the Builder class for convenient dialog construction
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         try {
-            tickets = new JSONObject(getArguments().getString("tickets")).getJSONArray("data");
+            final JSONObject ticketsObj = new JSONObject(getArguments().getString("tickets"));
+            final JSONArray tickets = ticketsObj.getJSONArray("data");
 
             //TODO: stations on wrong order from server
 
@@ -50,18 +50,21 @@ public class BuyTicketDialogFragment extends DialogFragment {
             String arrivalStation = arrivalStationObj.getString("station");
             String arrivalTime = arrivalStationObj.getString("time");
 
-            final JSONObject finalTicket = departureTicket;
-            finalTicket.put("lastStation", arrivalStationObj);
+            double departureTicketCost = departureTicket.getDouble("totalCost");
+            double arrivalTicketCost = arrivalTicket.getDouble("totalCost");
 
-            builder.setMessage(departureTime + " " + departureStation + "->" + arrivalTime + " " + arrivalStation)
+            double finalTicketCost = departureTicketCost + arrivalTicketCost;
+
+            builder.setMessage(departureTime + " " + departureStation + "->" + arrivalTime + " " + arrivalStation +
+                    "(" + String.format("%.2f", finalTicketCost) + ")")
                     .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            dialog.dismiss();
-                        }
-                    }).setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    dialog.dismiss();
+                }
+            }).setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
-                    mListener.onDialogTicketChosen(finalTicket);
+                    mListener.onDialogTicketConfirmed(ticketsObj);
                 }
             });
 
@@ -96,6 +99,6 @@ public class BuyTicketDialogFragment extends DialogFragment {
     }
 
     public interface BuyTicketDialogListener {
-        void onDialogTicketChosen(JSONObject ticket);
+        void onDialogTicketConfirmed(JSONObject tickets);
     }
 }

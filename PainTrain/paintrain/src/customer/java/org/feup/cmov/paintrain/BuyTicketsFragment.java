@@ -15,6 +15,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -143,47 +144,61 @@ public class BuyTicketsFragment extends DrawerViewFragment implements TimePicker
     }
 
     @Override
-    public void onDialogTicketChosen(JSONObject ticketObj) {
-        //CONFIRM TICKET
-        Log.d(TAG, ticketObj.toString());
+    public void onDialogTicketConfirmed(JSONObject tickets) {
+        //CONFIRM TICKETS
+        Log.d(TAG, tickets.toString());
 
+        final JSONArray oldTickets;
         RequestQueue queue = Volley.newRequestQueue(getActivity());
-        String url = getResources().getString(R.string.base_url) + "/pay";
-
-        //TODO: CONFIRM AND PAY TICKET
-
         try {
-            final JSONObject firstStation = ticketObj.getJSONObject("firstStation");
-            final JSONObject lastStation = ticketObj.getJSONObject("lastStation");
+            oldTickets = tickets.getJSONArray("data");
 
-            JSONObject jo = new JSONObject();
-            jo.put("ticket", ticketObj.getString("ticket"));
+            String url = getResources().getString(R.string.base_url) + "/pay";
 
-            JsonObjectRequest jsonObjectRequest = new SecureJsonObjectRequest(Request.Method.POST, url, jo, new Response.Listener<JSONObject>() {
+            //TODO: CONFIRM AND PAY TICKETS
+            JsonObjectRequest jsonObjectRequest = new SecureJsonObjectRequest(Request.Method.POST, url, tickets, new Response.Listener<JSONObject>() {
                 @Override
-                public void onResponse(JSONObject jsonObject) {
+                public void onResponse(JSONObject ticketsObj) {
                     try {
-                        Log.d(TAG, jsonObject.toString());
+                        Log.d(TAG, ticketsObj.toString());
+                        JSONArray newTickets = ticketsObj.getJSONArray("data");
 
-                        JSONObject newTicketObj = new JSONObject();
-                        newTicketObj.put("firstStation", firstStation);
-                        newTicketObj.put("lastStation", lastStation);
+                        JSONObject departureTicketObj = oldTickets.getJSONObject(0);
+                        JSONObject arrivalTicketObj = oldTickets.getJSONObject(oldTickets.length() - 1);
 
-                        String newTicket = jsonObject.getString("data");
-                        newTicketObj.put("ticket", newTicket);
+
+                        //TODO: tickets wrong order
+                        String newArrivalTicket = newTickets.getString(0);
+                        String newDepartureTicket = newTickets.getString(newTickets.length() - 1);
+
+                        JSONObject departureStationObj = departureTicketObj.getJSONObject("firstStation");
+                        JSONObject arrivalStationObj = arrivalTicketObj.getJSONObject("lastStation");
+
+                        //combined tickets array
+                        JSONArray finalTicketsArray = new JSONArray();
+                        finalTicketsArray.put(newDepartureTicket);
+                        finalTicketsArray.put(newArrivalTicket);
+
+                        JSONObject finalTicket = new JSONObject();
+                        finalTicket.put("firstStation", departureStationObj);
+                        finalTicket.put("lastStation", arrivalStationObj);
+                        finalTicket.put("tickets", finalTicketsArray);
+
+                        String newTicket = finalTicket.toString();
+
                         //update ticket set
                         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
 
-                        Set<String> tickets = settings.getStringSet("tickets", null);
+                        Set<String> ticketSet = settings.getStringSet("tickets", null);
 
-                        if (tickets == null)
-                            tickets = new HashSet<String>();
+                        if (ticketSet == null)
+                            ticketSet = new HashSet<String>();
 
-                        tickets.add(newTicketObj.toString());
-                        Log.d(TAG, tickets.toString());
+                        ticketSet.add(newTicket);
+                        Log.d(TAG, newTickets.toString());
 
                         SharedPreferences.Editor editor = settings.edit();
-                        editor.putStringSet("tickets", tickets);
+                        editor.putStringSet("tickets", ticketSet);
 
                         editor.commit();
 
@@ -196,7 +211,6 @@ public class BuyTicketsFragment extends DrawerViewFragment implements TimePicker
 
                 }
             }, getActivity());
-
             queue.add(jsonObjectRequest);
             getActivity().findViewById(R.id.progress_bar).setVisibility(View.VISIBLE);
         } catch (JSONException e) {

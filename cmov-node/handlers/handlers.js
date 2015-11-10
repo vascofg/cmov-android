@@ -535,7 +535,7 @@ var createTicket = function (request, reply, currentTrip, firstStation, lastStat
 
 exports.payHandler = function (request, reply) {
     var user = request.auth.credentials;
-    var encryptedTicket = request.payload.ticket;
+    var tickets = request.payload.data;
     var dateSplit = [];
 
     if (user.cardDate != null)
@@ -551,49 +551,58 @@ exports.payHandler = function (request, reply) {
     console.log(currentMonth);
     console.log(currentYear);
 
-    //if (user.card != null && ((cardYear > currentYear) || (cardYear == currentYear && cardMonth >= currentMonth))) {
+    var newTickets = [];
 
-        var ticket = privkeyAndroid.decrypt(encryptedTicket, 'base64', 'utf8');
+    tickets.forEach(function(ticketObj) {
 
-        console.log(ticket);
-        var ticketParams = ticket.split('--');
-        var email = ticketParams[1].split(':')[1];
-        var tripID = ticketParams[0].split(':')[1];
-        console.log(email);
-        if (email == request.auth.credentials.email) {
-            console.log("valid ticket");
+      //if (user.card != null && ((cardYear > currentYear) || (cardYear == currentYear && cardMonth >= currentMonth))) {
 
-            var models = request.server.plugins['hapi-sequelized'].db.sequelize.models;
+          var encryptedTicket = ticketObj.ticket;
+          var ticket = privkeyAndroid.decrypt(encryptedTicket, 'base64', 'utf8');
 
-            var ticketModel = models.Ticket;
+          console.log(ticket);
+          var ticketParams = ticket.split('--');
+          var email = ticketParams[1].split(':')[1];
+          var tripID = ticketParams[0].split(':')[1];
+          console.log(email);
+          if (email == request.auth.credentials.email) {
+              console.log("valid ticket");
 
-            ticket = ticket + "--paid";
+              var models = request.server.plugins['hapi-sequelized'].db.sequelize.models;
 
-            var encTicket = pubkeyAndroid.encrypt(ticket, 'utf8', 'base64');
-            var dTicket = privkeyAndroid.decrypt(encTicket, 'base64', 'utf8');
+              var ticketModel = models.Ticket;
 
-            console.log(ticket);
-            console.log(dTicket);
+              ticket = ticket + "--paid";
 
-            ticketModel.createTicket(ticketModel, encTicket, email, tripID)._then(function (ticket) {
-                //console.log(ticket.state);
-                // console.log(ticket.UserEmail);
-                // console.log(ticket.TripId);
+              var encTicket = pubkeyAndroid.encrypt(ticket, 'utf8', 'base64');
+              var dTicket = privkeyAndroid.decrypt(encTicket, 'base64', 'utf8');
 
-                if (ticket) {
-                    reply({
-                        data : encTicket
-                    }).code(200);
-                } else {
-                    reply("Internal Error").code(400);
-                }
-            });
-        }
+              console.log(ticket);
+              console.log(dTicket);
 
-    //} else {
-    //
-    //    reply("Invalid Card Info").code(400);
-    //}
+              ticketModel.createTicket(ticketModel, encTicket, email, tripID)._then(function (newTicket) {
+                  //console.log(ticket.state);
+                  // console.log(ticket.UserEmail);
+                  // console.log(ticket.TripId);
+
+                  if (ticket) {
+                      newTickets.push(newTicket);
+                  } else {
+                      reply("Internal Error").code(400);
+                  }
+                  if (newTickets.length == tickets.length) {
+                        reply({
+                            data : newTickets
+                        }).code(200);
+                  }
+              });
+          }
+
+      //} else {
+      //
+      //    reply("Invalid Card Info").code(400);
+      //}
+  });
 };
 
 
