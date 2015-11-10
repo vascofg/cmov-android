@@ -56,7 +56,7 @@ public class BuyTicketDialogFragment extends DialogFragment {
             double finalTicketCost = departureTicketCost + arrivalTicketCost;
 
             builder.setMessage(departureTime + " " + departureStation + "->" + arrivalTime + " " + arrivalStation +
-                    "(" + String.format("%.2f", finalTicketCost) + ")")
+                    "(" + String.format("%.2f", finalTicketCost) + "€)")
                     .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
                     dialog.dismiss();

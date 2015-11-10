@@ -163,8 +163,8 @@ public class BuyTicketsFragment extends DrawerViewFragment implements TimePicker
                         Log.d(TAG, ticketsObj.toString());
                         JSONArray newTickets = ticketsObj.getJSONArray("data");
 
-                        JSONObject departureTicketObj = oldTickets.getJSONObject(0);
-                        JSONObject arrivalTicketObj = oldTickets.getJSONObject(oldTickets.length() - 1);
+                        JSONObject arrivalTicketObj = oldTickets.getJSONObject(0);
+                        JSONObject departureTicketObj = oldTickets.getJSONObject(oldTickets.length() - 1);
 
 
                         //TODO: tickets wrong order
