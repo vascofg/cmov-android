@@ -6,41 +6,42 @@ import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
 import android.nfc.NfcEvent;
 import android.os.Bundle;
-import android.widget.EditText;
-import android.widget.Toast;
 
 /**
  * Created by vascofg on 08-11-2015.
  */
-public class NFCSendActivity extends Activity implements NfcAdapter.CreateNdefMessageCallback {
+public class NFCSendActivity extends Activity implements NfcAdapter.CreateNdefMessageCallback, NfcAdapter.OnNdefPushCompleteCallback {
 
-    EditText mEditText;
+    public static final int RC_NFC = 4;
 
     @Override
     public NdefMessage createNdefMessage(NfcEvent nfcEvent) {
-        String message = mEditText.getText().toString();
+        String message = getIntent().getStringExtra("NFC_DATA");
+        byte[] mimeType = getResources().getString(R.string.nfc_mimeType).getBytes();
         NdefRecord ndefRecord = new NdefRecord(NdefRecord.TNF_MIME_MEDIA,
-                "text/plain".getBytes(), null, message.getBytes());
+                mimeType, null, message.getBytes());
         NdefMessage ndefMessage = new NdefMessage(new NdefRecord[]{ndefRecord});
         return ndefMessage;
+    }
+
+    @Override
+    public void onNdefPushComplete(NfcEvent nfcEvent) {
+        setResult(RESULT_OK);
+        finish();
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.nfc_send_activity);
-        mEditText = (EditText) findViewById(R.id.nfc_send_edit_text);
 
         NfcAdapter mAdapter = NfcAdapter.getDefaultAdapter(this);
-        if (mAdapter == null) {
-            mEditText.setText("Sorry this device does not have NFC.");
-            return;
+        if(mAdapter==null || !mAdapter.isEnabled()) {
+            finish();
+        } else {
+            mAdapter.setNdefPushMessageCallback(this, this);
         }
 
-        if (!mAdapter.isEnabled()) {
-            Toast.makeText(this, "Please enable NFC via Settings.", Toast.LENGTH_LONG).show();
-        }
-
-        mAdapter.setNdefPushMessageCallback(this, this);
     }
+
 }

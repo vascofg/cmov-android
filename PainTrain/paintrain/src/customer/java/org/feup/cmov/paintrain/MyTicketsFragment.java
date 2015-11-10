@@ -3,6 +3,7 @@ package org.feup.cmov.paintrain;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.nfc.NfcAdapter;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
@@ -68,6 +69,24 @@ public class MyTicketsFragment extends DrawerViewFragment {
                     }
                 }
             });
+
+            NfcAdapter mAdapter = NfcAdapter.getDefaultAdapter(getActivity());
+            if(mAdapter!=null && mAdapter.isEnabled()) {
+                mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+                    @Override
+                    public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                        try {
+                            Intent nfcIntent = new Intent(getActivity(), NFCSendActivity.class);
+                            nfcIntent.putExtra("NFC_DATA", mItems.get(i).getJSONArray("tickets").toString());
+                            startActivityForResult(nfcIntent, NFCSendActivity.RC_NFC);
+                            return true;
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        return false;
+                    }
+                });
+            }
 
         }
 

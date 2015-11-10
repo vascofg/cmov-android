@@ -5,7 +5,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.nfc.NdefMessage;
+import android.nfc.NfcAdapter;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.util.Base64;
 import android.util.Log;
@@ -77,6 +80,18 @@ public class MainActivity extends Activity {
         Log.d(TAG, "Decrypted " + decryptedText.length + " bytes");
         String result = new String(decryptedText, "UTF-8");
         return result;
+    }
+
+    @Override
+    public void onNewIntent(Intent intent) {
+        if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())) {
+            Parcelable[] rawMessages = intent.getParcelableArrayExtra(
+                    NfcAdapter.EXTRA_NDEF_MESSAGES);
+
+            NdefMessage message = (NdefMessage) rawMessages[0]; // only one message transferred
+            String payload = new String(message.getRecords()[0].getPayload());
+            validateTicket(payload);
+        }
     }
 
     @Override

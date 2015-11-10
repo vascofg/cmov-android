@@ -27,4 +27,6 @@
         <item>C1</item>
     </string-array>
 
+    <string name="nfc_mimeType">application/org.feup.cmov.paintrain</string>
+
 </resources>
