@@ -3,7 +3,6 @@ package org.feup.cmov.paintrain;
 import android.app.*;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.util.Log;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -32,47 +31,47 @@ public class BuyTicketDialogFragment extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         super.onCreateDialog(savedInstanceState);
         final JSONArray tickets;
-        try {
-            tickets = new JSONObject(getArguments().getString("tickets")).getJSONArray("data");
-        } catch (JSONException e) {
-            throw new RuntimeException("JSON Error");
-        }
         // Use the Builder class for convenient dialog construction
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        String[] tripsStr = new String[tickets.length()];
-        for (int i = 0; i < tickets.length(); i++) {
-            try {
-                JSONObject ticket = tickets.getJSONObject(i);
-                JSONObject departure = ticket.getJSONObject("firstStation");
-                String departureStation = departure.getString("station");
-                String departureTime = departure.getString("time");
+        try {
+            tickets = new JSONObject(getArguments().getString("tickets")).getJSONArray("data");
 
-                JSONObject arrival = ticket.getJSONObject("lastStation");
-                String arrivalStation = arrival.getString("station");
-                String arrivalTime = arrival.getString("time");
+            //TODO: stations on wrong order from server
 
-                tripsStr[i] = departureTime + " " + departureStation + "->" + arrivalTime + " " + arrivalStation;
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-        builder.setItems(tripsStr, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                Log.d(TAG, "Clicked item #" + i);
-                try {
-                    mListener.onDialogTicketChosen(tickets.getJSONObject(i));
-                } catch (JSONException e) {
-                    throw new RuntimeException("JSON Error");
+            JSONObject arrivalTicket = tickets.getJSONObject(0);
+            JSONObject departureTicket = tickets.getJSONObject(tickets.length() - 1);
+
+            JSONObject departureStationObj = departureTicket.getJSONObject("firstStation");
+            JSONObject arrivalStationObj = arrivalTicket.getJSONObject("lastStation");
+
+            String departureStation = departureStationObj.getString("station");
+            String departureTime = departureStationObj.getString("time");
+
+            String arrivalStation = arrivalStationObj.getString("station");
+            String arrivalTime = arrivalStationObj.getString("time");
+
+            final JSONObject finalTicket = departureTicket;
+            finalTicket.put("lastStation", arrivalStationObj);
+
+            builder.setMessage(departureTime + " " + departureStation + "->" + arrivalTime + " " + arrivalStation)
+                    .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.dismiss();
+                        }
+                    }).setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    mListener.onDialogTicketChosen(finalTicket);
                 }
-            }
-        }).setNegativeButton("Dismiss", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                dialog.dismiss();
-            }
-        });
-        // Create the AlertDialog object and return it
-        return builder.create();
+            });
+
+            // Create the AlertDialog object and return it
+            return builder.create();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
     @Override
