@@ -61,7 +61,11 @@ public class MyTicketsFragment extends DrawerViewFragment {
                                         long id) {
                     Log.d(TAG, "Clicked on list: " + position);
                     Log.d(TAG, mItems.get(position).toString());
-                    showQRCode(mItems.get(position).toString());
+                    try {
+                        showQRCode(mItems.get(position).getJSONArray("tickets").toString());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 }
             });
 

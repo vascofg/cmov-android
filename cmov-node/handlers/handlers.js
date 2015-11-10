@@ -586,7 +586,7 @@ exports.payHandler = function (request, reply) {
                   // console.log(ticket.TripId);
 
                   if (ticket) {
-                      newTickets.push(newTicket);
+                      newTickets.push(encTicket);
                   } else {
                       reply("Internal Error").code(400);
                   }
