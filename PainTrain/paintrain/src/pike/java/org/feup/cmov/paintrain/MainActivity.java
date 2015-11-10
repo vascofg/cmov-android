@@ -53,6 +53,8 @@ public class MainActivity extends Activity {
 
     private String mToken;
 
+    private View mProgress;
+
     private PrivateKey privKey;
 
     public static PrivateKey getPrivateKey(Context mContext) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
@@ -86,6 +88,8 @@ public class MainActivity extends Activity {
         current_station = (Spinner) findViewById(R.id.current_station);
 
         mButton = (Button) findViewById(R.id.scan_qrcode_button);
+
+        mProgress = findViewById(R.id.progress_bar);
 
         try {
             privKey = MainActivity.getPrivateKey(this);
@@ -135,6 +139,7 @@ public class MainActivity extends Activity {
                     @Override
                     public void onResponse(JSONObject jsonObject) {
                         Log.d(TAG, jsonObject.toString());
+                        mProgress.setVisibility(View.GONE);
                         try {
                             if (jsonObject != null) {
                                 JSONArray data = jsonObject.getJSONArray("data");
@@ -157,16 +162,14 @@ public class MainActivity extends Activity {
                                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                                 current_trip.setAdapter(adapter);
 
-                                findViewById(R.id.progress_bar).setVisibility(View.INVISIBLE);
-
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
                     }
                 }, this);
-// Add the request to the RequestQueue.
-        findViewById(R.id.progress_bar).setVisibility(View.VISIBLE);
+        // Add the request to the RequestQueue.
+        mProgress.setVisibility(View.VISIBLE);
         queue.add(jsonObjectRequest);
 
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());

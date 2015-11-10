@@ -34,7 +34,7 @@ public class BuyTicketsFragment extends DrawerViewFragment implements TimePicker
 
     private int hourOfDay, minute;
 
-    private ProgressBar mProgress;
+    private View mProgress;
 
     @Nullable
     @Override
@@ -46,7 +46,7 @@ public class BuyTicketsFragment extends DrawerViewFragment implements TimePicker
         final Calendar c = Calendar.getInstance();
         setTime(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE));
 
-        mProgress = (ProgressBar) getActivity().findViewById(R.id.progress_bar);
+        mProgress = getActivity().findViewById(R.id.progress_bar);
 
         Button button = (Button) rootView.findViewById(R.id.buy_tickets_button);
         button.setOnClickListener(this);
@@ -97,7 +97,7 @@ public class BuyTicketsFragment extends DrawerViewFragment implements TimePicker
                 @Override
                 public void onResponse(JSONObject jsonObject) {
                     Log.d(TAG, jsonObject.toString());
-                    mProgress.setVisibility(View.INVISIBLE);
+                    mProgress.setVisibility(View.GONE);
 
                     DialogFragment f = BuyTicketDialogFragment.newInstance(jsonObject.toString());
                     f.setTargetFragment(BuyTicketsFragment.this, 0);
@@ -187,7 +187,7 @@ public class BuyTicketsFragment extends DrawerViewFragment implements TimePicker
 
                         editor.commit();
 
-                        mProgress.setVisibility(View.INVISIBLE);
+                        mProgress.setVisibility(View.GONE);
                         Log.d(TAG, "Saved ticket on SharedPreferences set");
                         Toast.makeText(getActivity(), "Success", Toast.LENGTH_SHORT).show();
                     } catch (JSONException e) {

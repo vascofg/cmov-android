@@ -17,11 +17,11 @@ import java.net.HttpURLConnection;
 public class CustomErrorListener implements Response.ErrorListener {
 
     private Activity activity;
-    private ProgressBar progress;
+    private View progress;
 
     public CustomErrorListener(Activity activity) {
         this.activity = activity;
-        this.progress = (ProgressBar) activity.findViewById(R.id.progress_bar);
+        this.progress = activity.findViewById(R.id.progress_bar);
     }
 
     @Override
@@ -37,6 +37,6 @@ public class CustomErrorListener implements Response.ErrorListener {
         Log.e("VOLLEY", volleyError.toString());
         Toast.makeText(activity, R.string.connection_error, Toast.LENGTH_LONG).show();
         if (progress != null)
-            progress.setVisibility(View.INVISIBLE);
+            progress.setVisibility(View.GONE);
     }
 }

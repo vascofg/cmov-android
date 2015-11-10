@@ -29,10 +29,14 @@ public class TimetableFragment extends DrawerViewFragment {
     private List<JSONObject> mItems;
     private ListView mListView;
 
+    private View mProgress;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(android.R.layout.list_content, container, false);
         mListView = (ListView) rootView.findViewById(android.R.id.list);
+
+        mProgress = getActivity().findViewById(R.id.progress_bar);
 
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -56,12 +60,7 @@ public class TimetableFragment extends DrawerViewFragment {
                     @Override
                     public void onResponse(JSONObject jsonObject) {
                         Log.d(TAG, jsonObject.toString());
-                        /*getListView().setAdapter(new JSONArrayAdapter(getBaseContext(),
-                                jsonArray,                                                   // JSONArray data
-                                R.layout.timetable_row,                    // a layout resource to display a row
-                                new String[] {"departure", "departureTime", "arrival", "arrivalTime"},                     // field names from JSONObjects
-                                new int[] {R.id.timetable_row_departure, R.id.timetable_row_departure_time, R.id.timetable_row_arrival, R.id.timetable_row_arrival_time},     // corresponding View ids to map field names to
-                                "id" ));*/
+                        mProgress.setVisibility(View.GONE);
                         try {
                             if (jsonObject != null) {
                                 JSONArray data = jsonObject.getJSONArray("data");
@@ -78,6 +77,7 @@ public class TimetableFragment extends DrawerViewFragment {
                 }, getActivity());
 // Add the request to the RequestQueue.
         queue.add(jsonObjectRequest);
+        mProgress.setVisibility(View.VISIBLE);
 
         return rootView;
     }
