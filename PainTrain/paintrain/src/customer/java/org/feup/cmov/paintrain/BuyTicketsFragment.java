@@ -1,9 +1,9 @@
 package org.feup.cmov.paintrain;
 
 import android.app.DialogFragment;
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -172,7 +172,7 @@ public class BuyTicketsFragment extends DrawerViewFragment implements TimePicker
                         String newTicket = jsonObject.getString("data");
                         newTicketObj.put("ticket", newTicket);
                         //update ticket set
-                        SharedPreferences settings = getActivity().getPreferences(Context.MODE_PRIVATE);
+                        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
 
                         Set<String> tickets = settings.getStringSet("tickets", null);
 

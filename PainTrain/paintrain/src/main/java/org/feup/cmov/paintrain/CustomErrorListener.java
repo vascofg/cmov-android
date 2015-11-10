@@ -1,6 +1,7 @@
 package org.feup.cmov.paintrain;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -27,7 +28,8 @@ public class CustomErrorListener implements Response.ErrorListener {
     public void onErrorResponse(VolleyError volleyError) {
         try {
             if (volleyError.networkResponse.statusCode == HttpURLConnection.HTTP_UNAUTHORIZED) {
-                ((MainActivity) activity).connectAndAuth();
+                Intent authIntent = new Intent(activity, AuthActivity.class);
+                activity.startActivityForResult(authIntent, AuthActivity.RC_AUTH);
             }
         } catch (NullPointerException e) {
         }

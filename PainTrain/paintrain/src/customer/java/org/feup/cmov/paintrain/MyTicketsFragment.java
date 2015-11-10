@@ -1,10 +1,10 @@
 package org.feup.cmov.paintrain;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -37,11 +37,11 @@ public class MyTicketsFragment extends DrawerViewFragment {
         mListView = (ListView) rootView.findViewById(android.R.id.list);
         mItems = new ArrayList<JSONObject>();
 
-        SharedPreferences settings = getActivity().getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
 
         Set<String> tickets = settings.getStringSet("tickets", null);
 
-        if(tickets!=null) {
+        if (tickets != null) {
 
             Log.d(TAG, tickets.toString());
 

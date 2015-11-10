@@ -1,8 +1,8 @@
 package org.feup.cmov.paintrain;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkResponse;
 import com.android.volley.Response;
@@ -39,8 +39,8 @@ public class SecureJsonObjectRequest extends JsonObjectRequest {
     @Override
     public Map<String, String> getHeaders() throws AuthFailureError {
         //get token from storage
-        SharedPreferences settings = activity.getPreferences(Context.MODE_PRIVATE);
-        String token = settings.getString(MainActivity.TOKEN_KEY, null);
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(activity.getApplicationContext());
+        String token = settings.getString(AuthActivity.TOKEN_KEY, null);
 
         Map<String, String> headers = new HashMap<String, String>();
         String auth = "Bearer " + token;

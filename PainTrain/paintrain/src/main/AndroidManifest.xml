@@ -23,6 +23,16 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".AuthActivity"
+            android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="org.feup.cmov.paintrain.auth"/>
+
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+
     </application>
 
 </manifest>
