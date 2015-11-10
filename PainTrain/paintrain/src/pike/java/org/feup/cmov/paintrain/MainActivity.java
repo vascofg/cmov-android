@@ -39,6 +39,7 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 
@@ -56,6 +57,8 @@ public class MainActivity extends Activity {
     private Button mButton;
 
     private String mToken;
+
+    private List<String> mValidatedTickets;
 
     private View mProgress;
 
@@ -103,6 +106,8 @@ public class MainActivity extends Activity {
         current_station = (Spinner) findViewById(R.id.current_station);
 
         mButton = (Button) findViewById(R.id.scan_qrcode_button);
+
+        mValidatedTickets = new LinkedList<String>();
 
         mProgress = findViewById(R.id.progress_bar);
 
@@ -292,6 +297,7 @@ public class MainActivity extends Activity {
 
                         if(firstStationIndex<=currentStationIndex && lastStationIndex>=currentStationIndex) {
                             //if at least one ticket is valid, it's OK
+                            mValidatedTickets.add(ticket);
                             return true;
                         }
                     }
@@ -315,5 +321,40 @@ public class MainActivity extends Activity {
             e.printStackTrace();
         }
         return false;
+    }
+
+    public void sendTickets(View view) {
+        try {
+            if(mValidatedTickets.size()==0) {
+                Log.d(TAG, "No tickets to send");
+                Toast.makeText(this,"No tickets to send",Toast.LENGTH_LONG).show();
+            }
+
+            RequestQueue queue = Volley.newRequestQueue(this);
+            String url = getResources().getString(R.string.base_url) + "/ticketStatus";
+
+            JSONObject jo = new JSONObject();
+            JSONArray ja = new JSONArray(mValidatedTickets);
+            jo.put("data", ja);
+
+
+            // Request a JSON response from the provided URL.
+            JsonObjectRequest jsonObjectRequest = new SecureJsonObjectRequest(Request.Method.POST, url, jo, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject jsonObject) {
+                    Log.d(TAG, "Sent " + mValidatedTickets.size() + " tickets");
+                    Toast.makeText(MainActivity.this,"Sent " + mValidatedTickets.size() + " " + (mValidatedTickets.size()==1?"ticket":"tickets"), Toast.LENGTH_LONG).show();
+                    mProgress.setVisibility(View.GONE);
+                    mValidatedTickets = new LinkedList<String>();
+                }
+            },this);
+
+            // Add the request to the RequestQueue.
+            mProgress.setVisibility(View.VISIBLE);
+            queue.add(jsonObjectRequest);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
     }
 }

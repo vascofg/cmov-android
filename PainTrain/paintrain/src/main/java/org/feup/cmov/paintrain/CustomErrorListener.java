@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.util.Log;
 import android.view.View;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -27,11 +26,13 @@ public class CustomErrorListener implements Response.ErrorListener {
     @Override
     public void onErrorResponse(VolleyError volleyError) {
         try {
+            Log.d("VOLLEY", volleyError.networkResponse.toString());
             if (volleyError.networkResponse.statusCode == HttpURLConnection.HTTP_UNAUTHORIZED) {
                 Intent authIntent = new Intent(activity, AuthActivity.class);
                 activity.startActivityForResult(authIntent, AuthActivity.RC_AUTH);
             }
         } catch (NullPointerException e) {
+            e.printStackTrace();
         }
 
         Log.e("VOLLEY", volleyError.toString());

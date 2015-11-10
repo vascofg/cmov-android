@@ -31,6 +31,13 @@
         android:onClick="readQRCode"
         android:text="Scan ticket"/>
 
+    <Button
+        android:id="@+id/send_tickets_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="sendTickets"
+        android:text="Send tickets"/>
+
     <ProgressBar
         android:id="@+id/progress_bar"
         style="?android:attr/progressBarStyleLarge"
