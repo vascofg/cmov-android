@@ -48,6 +48,7 @@ public class MainActivity extends Activity {
     private List<String> mTrips;
     private List<String> mStations;
     private JSONArray mTripsData;
+    private int[] mTripsIDs;
     private Spinner current_trip, current_station;
     private Button mButton;
 
@@ -141,13 +142,18 @@ public class MainActivity extends Activity {
                         mProgress.setVisibility(View.GONE);
                         try {
                             if (jsonObject != null) {
-                                JSONArray data = jsonObject.getJSONArray("data");
-                                mTripsData = data;
-                                mTrips = new ArrayList<String>(data.length());
-                                for (int i = 0; i < data.length(); i++) {
-                                    JSONArray trips = data.getJSONObject(i).getJSONArray("times");
-                                    JSONObject departureObj = trips.getJSONObject(0);
-                                    JSONObject arrivalObj = trips.getJSONObject(trips.length() - 1);
+                                mTripsData = jsonObject.getJSONArray("data");;
+                                mTrips = new ArrayList<String>(mTripsData.length());
+                                mTripsIDs = new int[mTripsData.length()];
+                                for (int i = 0; i < mTripsData.length(); i++) {
+                                    JSONObject trip = mTripsData.getJSONObject(i);
+                                    JSONArray times = trip.getJSONArray("times");
+
+                                    int tripID = trip.getInt("id");
+                                    mTripsIDs[i] = tripID;
+
+                                    JSONObject departureObj = times.getJSONObject(0);
+                                    JSONObject arrivalObj = times.getJSONObject(times.length() - 1);
 
                                     String departureStation = departureObj.getString("station");
                                     String departureTime = departureObj.getString("time");
@@ -155,7 +161,7 @@ public class MainActivity extends Activity {
                                     String arrivalStation = arrivalObj.getString("station");
                                     String arrivalTime = arrivalObj.getString("time");
 
-                                    mTrips.add(departureTime + " " + departureStation + "->" + arrivalTime + " " + arrivalStation);
+                                    mTrips.add("(" + tripID + ") " + departureTime + " " + departureStation + "->" + arrivalTime + " " + arrivalStation);
                                 }
                                 ArrayAdapter<String> adapter = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_spinner_item, mTrips);
                                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -235,7 +241,6 @@ public class MainActivity extends Activity {
 
     private boolean validateTicket(String ticketsStr) {
         Log.d(TAG, ticketsStr);
-        boolean valid = true;
         try {
             JSONArray tickets = new JSONArray(ticketsStr);
             for(int i=0;i<tickets.length();i++) {
@@ -243,14 +248,41 @@ public class MainActivity extends Activity {
                 Log.d(TAG, "Unencrypting ticket #" + i + ": " + ticket);
                 String ticketDecrypted = MainActivity.Decrypt(ticket, privKey);
                 Log.d(TAG, ticketDecrypted);
-                String[] params = ticketDecrypted.split("--");
-                for(String param:params)
-                    Log.d(TAG, param);
-                boolean paid = params[params.length-1].equals("paid");
-                if(!paid)
-                    valid=false;
+                String[] paramsStr = ticketDecrypted.split("--");
+                JSONObject params = new JSONObject();
+                for(String paramStr:paramsStr) {
+                    String key, value;
+                    int keyLenSeparatorPos = paramStr.indexOf(':');
+                    if(keyLenSeparatorPos>0) {
+                        key = paramStr.substring(0,keyLenSeparatorPos);
+                        value = paramStr.substring(keyLenSeparatorPos+1,paramStr.length());
+                    } else
+                    {
+                        key = paramStr;
+                        value = "true";
+                    }
+                    params.put(key, value);
+                }
+                Log.d(TAG, params.toString());
+
+                if(params.getBoolean("paid")) {
+                    int currentTripID = mTripsIDs[current_trip.getSelectedItemPosition()];
+                    if(params.getInt("id")==currentTripID) {
+                        String firstStation = params.getString("firstStation");
+                        String lastStation = params.getString("lastStation");
+
+                        int firstStationIndex = mStations.indexOf(firstStation);
+                        int lastStationIndex = mStations.indexOf(lastStation);
+                        int currentStationIndex = current_station.getSelectedItemPosition();
+
+                        if(firstStationIndex<=currentStationIndex && lastStationIndex>=currentStationIndex) {
+                            //if at least one ticket is valid, it's OK
+                            return true;
+                        }
+                    }
+
+                }
             }
-            return valid;
             //TODO: compare stations
         } catch (JSONException e) {
             e.printStackTrace();

@@ -147,8 +147,7 @@ public class AuthActivity extends Activity implements GoogleApiClient.Connection
 
         try {
             jo.put("googleCredentials", token);
-            //jo.put("pike", getResources().getString(R.string.role).equals("Pike"));
-            jo.put("pike", false);
+            jo.put("pike", getResources().getString(R.string.role).equals("Pike"));
             JsonObjectRequest jsonObjectRequest = new InsecureJsonObjectRequest(Request.Method.POST, url, jo, new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject jsonObject) {
@@ -162,6 +161,7 @@ public class AuthActivity extends Activity implements GoogleApiClient.Connection
             },this);
             queue.add(jsonObjectRequest);
         } catch (JSONException e) {
+            e.printStackTrace();
             connectionFailed(e.toString());
         }
     }
@@ -196,9 +196,11 @@ public class AuthActivity extends Activity implements GoogleApiClient.Connection
             try {
                 return GoogleAuthUtil.getToken(getApplicationContext(), account, scopes);
             } catch (IOException e) {
+                e.printStackTrace();
                 connectionFailed("Error retrieving ID token.");
                 return null;
             } catch (GoogleAuthException e) {
+                e.printStackTrace();
                 connectionFailed("Error retrieving ID token.");
                 return null;
             }
