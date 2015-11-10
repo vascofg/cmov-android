@@ -1,5 +1,6 @@
 package org.feup.cmov.paintrain;
 
+import android.app.*;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;

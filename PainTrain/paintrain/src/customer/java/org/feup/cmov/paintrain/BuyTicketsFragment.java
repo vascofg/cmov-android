@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.*;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -169,6 +170,7 @@ public class BuyTicketsFragment extends DrawerViewFragment implements TimePicker
                         newTicketObj.put("lastStation", lastStation);
 
                         String newTicket = jsonObject.getString("data");
+                        newTicketObj.put("ticket", newTicket);
                         //update ticket set
                         SharedPreferences settings = getActivity().getPreferences(Context.MODE_PRIVATE);
 

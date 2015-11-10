@@ -41,27 +41,31 @@ public class MyTicketsFragment extends DrawerViewFragment {
 
         Set<String> tickets = settings.getStringSet("tickets", null);
 
-        Log.d(TAG, tickets.toString());
+        if(tickets!=null) {
 
-        try {
-            for (String ticket : tickets) {
-                mItems.add(new JSONObject(ticket));
+            Log.d(TAG, tickets.toString());
+
+            try {
+                for (String ticket : tickets) {
+                    mItems.add(new JSONObject(ticket));
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-        } catch (JSONException e) {
-            e.printStackTrace();
+
+            mListView.setAdapter(new MyTicketsArrayAdapter(getActivity(), mItems));
+
+            mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position,
+                                        long id) {
+                    Log.d(TAG, "Clicked on list: " + position);
+                    Log.d(TAG, mItems.get(position).toString());
+                    showQRCode(mItems.get(position).toString());
+                }
+            });
+
         }
-
-        mListView.setAdapter(new MyTicketsArrayAdapter(getActivity(), mItems));
-
-        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position,
-                                    long id) {
-                Log.d(TAG, "Clicked on list: " + position);
-                Log.d(TAG, mItems.get(position).toString());
-                showQRCode(mItems.get(position).toString());
-            }
-        });
 
         return rootView;
     }

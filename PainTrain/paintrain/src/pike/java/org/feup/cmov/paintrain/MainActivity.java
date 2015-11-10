@@ -3,12 +3,14 @@ package org.feup.cmov.paintrain;
 import android.accounts.Account;
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.*;
@@ -28,7 +30,17 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import java.io.*;
+import java.security.*;
+import java.security.interfaces.RSAPrivateKey;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.KeySpec;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,6 +72,8 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
 
     private ProgressDialog mProgress;
 
+    private PrivateKey privKey;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,6 +83,16 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         current_station = (Spinner) findViewById(R.id.current_station);
 
         mButton = (Button) findViewById(R.id.scan_qrcode_button);
+
+        try {
+            privKey = MainActivity.getPrivateKey(this);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (InvalidKeySpecException e) {
+            e.printStackTrace();
+        }
 
         current_trip.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -261,13 +285,54 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         }
     }
 
-    private void validateTicket(String ticket) {
+    private boolean validateTicket(String ticket) {
         Log.d(TAG, ticket);
         try {
             JSONObject ticketObj = new JSONObject(ticket);
+            String ticketDecrypted = MainActivity.Decrypt(ticketObj.getString("ticket"), privKey);
+            Log.d(TAG, ticketDecrypted);
+            //TODO: compare stations
         } catch (JSONException e) {
             e.printStackTrace();
+        } catch (NoSuchPaddingException e) {
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (IllegalBlockSizeException e) {
+            e.printStackTrace();
+        } catch (BadPaddingException e) {
+            e.printStackTrace();
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
+        } finally {
+            return false;
         }
+    }
+
+    public static PrivateKey getPrivateKey(Context mContext) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
+        // reads the public key stored in a file
+        InputStream is = mContext.getResources().openRawResource(R.raw.privkey);
+        BufferedInputStream bis = new BufferedInputStream(is);
+        byte[] privKeyBytes = new byte[(int)is.available()];
+        bis.read(privKeyBytes);
+        bis.close();
+        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+        KeySpec ks = new PKCS8EncodedKeySpec(privKeyBytes);
+        PrivateKey privKey = keyFactory.generatePrivate(ks);
+
+        return privKey;
+    }
+
+    private static String Decrypt(String message, PrivateKey key) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException, UnsupportedEncodingException {
+            String result = null;
+            Cipher cipher = Cipher.getInstance("RSA");
+            cipher.init(Cipher.DECRYPT_MODE, key);
+            byte[] decryptedText = cipher.doFinal(Base64.decode(message, Base64.DEFAULT));
+            Log.d(TAG, "Decrypted " + decryptedText.length + " bytes");
+            result = new String(decryptedText, "UTF-8");
+            return result;
     }
 
     public void authWithServer(String token) {
