@@ -448,8 +448,8 @@ var createMultipleTickets = function (request, reply, currentTrip, currentStatio
     if (currentTrip != null) {
 
         var ticket = "id:" + currentTrip.id + "--email:" + request.auth.credentials.email + "--firstStation:" + currentStationArray[0].station +
-            "--time:" + currentStationArray[0].time + "--lastStation:" + secondStationArray[1].station +
-            "--lastTime:" + secondStationArray[1].time + "--price:" + tripCost + "--random:" + Math.random();
+            "--time:" + currentStationArray[0].time + "--lastStation:" + currentStationArray[1].station +
+            "--lastTime:" + currentStationArray[1].time + "--price:" + tripCost + "--random:" + Math.random();
 
 
         //console.log('Encrypt with Alice Public; Sign with Bob Private');
