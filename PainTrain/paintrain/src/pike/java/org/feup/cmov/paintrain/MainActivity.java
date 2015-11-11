@@ -49,6 +49,8 @@ public class MainActivity extends Activity {
 
     private static final int RC_SCAN = 0;
 
+    private static final String STATE_VALIDATED_TICKETS = "validatedTickets";
+
     private List<String> mTrips;
     private List<String> mStations;
     private JSONArray mTripsData;
@@ -58,7 +60,7 @@ public class MainActivity extends Activity {
 
     private String mToken;
 
-    private List<String> mValidatedTickets;
+    private ArrayList<String> mValidatedTickets;
 
     private View mProgress;
 
@@ -116,7 +118,8 @@ public class MainActivity extends Activity {
 
         mButton = (Button) findViewById(R.id.scan_qrcode_button);
 
-        mValidatedTickets = new LinkedList<String>();
+        if(mValidatedTickets == null)
+            mValidatedTickets = new ArrayList<String>();
 
         mProgress = findViewById(R.id.progress_bar);
 
@@ -354,7 +357,7 @@ public class MainActivity extends Activity {
                     Log.d(TAG, "Sent " + mValidatedTickets.size() + " tickets");
                     Toast.makeText(MainActivity.this,"Sent " + mValidatedTickets.size() + " " + (mValidatedTickets.size()==1?"ticket":"tickets"), Toast.LENGTH_LONG).show();
                     mProgress.setVisibility(View.GONE);
-                    mValidatedTickets = new LinkedList<String>();
+                    mValidatedTickets = new ArrayList<String>();
                 }
             },this);
 
@@ -365,5 +368,18 @@ public class MainActivity extends Activity {
             e.printStackTrace();
         }
 
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putStringArrayList(STATE_VALIDATED_TICKETS, mValidatedTickets);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        mValidatedTickets = savedInstanceState.getStringArrayList(STATE_VALIDATED_TICKETS);
     }
 }
