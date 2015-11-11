@@ -93,7 +93,16 @@ public class MainActivity extends Activity {
 
             NdefMessage message = (NdefMessage) rawMessages[0]; // only one message transferred
             String payload = new String(message.getRecords()[0].getPayload());
-            validateTicket(payload);
+            Log.d(TAG,"GOT NFC TICKET: " + payload);
+
+            if(validateTicket(payload)) {
+                Log.d(TAG, "Valid ticket!");
+                Toast.makeText(MainActivity.this, "Valid ticket!", Toast.LENGTH_SHORT).show();
+            }
+            else {
+                Log.d(TAG, "Invalid ticket!");
+                Toast.makeText(MainActivity.this, "Invalid ticket!", Toast.LENGTH_SHORT).show();
+            };
         }
     }
 
