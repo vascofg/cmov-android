@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.NetworkResponse;
 import com.android.volley.Response;
 import com.android.volley.toolbox.JsonObjectRequest;
@@ -18,6 +19,7 @@ import java.util.Map;
 public class SecureJsonObjectRequest extends JsonObjectRequest {
 
     private Activity activity;
+    private final DefaultRetryPolicy retryPolicy = new DefaultRetryPolicy(5000,2,1.0f);
 
     public SecureJsonObjectRequest(int method,
                                    java.lang.String url,
@@ -26,6 +28,7 @@ public class SecureJsonObjectRequest extends JsonObjectRequest {
                                    Activity activity) {
         super(method, url, jsonRequest, listener, new CustomErrorListener(activity));
         this.activity = activity;
+        this.setRetryPolicy(retryPolicy);
     }
 
     public SecureJsonObjectRequest(int method,
@@ -34,6 +37,7 @@ public class SecureJsonObjectRequest extends JsonObjectRequest {
                                    Activity activity) {
         super(method, url, listener, new CustomErrorListener(activity));
         this.activity = activity;
+        this.setRetryPolicy(retryPolicy);
     }
 
     @Override

@@ -57,6 +57,9 @@ public class AuthActivity extends Activity implements GoogleApiClient.Connection
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        mProgress = ProgressDialog.show(this, "Connecting",
+                "Authenticating with server", true);
+
         // Build GoogleApiClient with access to basic profile
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
@@ -80,10 +83,6 @@ public class AuthActivity extends Activity implements GoogleApiClient.Connection
         new GetIdTokenTask().execute(accountName);
 
         mShouldResolve = false;
-
-
-        mProgress = ProgressDialog.show(this, "Connecting",
-                "Authenticating with server", true);
 
         // Show the signed-in UI
         //showSignedInUI();

@@ -26,18 +26,21 @@ public class CustomErrorListener implements Response.ErrorListener {
     @Override
     public void onErrorResponse(VolleyError volleyError) {
         try {
+            Log.e("VOLLEY", volleyError.toString());
+
+            if (progress != null)
+                progress.setVisibility(View.GONE);
+
             Log.d("VOLLEY", volleyError.networkResponse.toString());
             if (volleyError.networkResponse.statusCode == HttpURLConnection.HTTP_UNAUTHORIZED) {
                 Intent authIntent = new Intent(activity, AuthActivity.class);
                 activity.startActivityForResult(authIntent, AuthActivity.RC_AUTH);
+                return;
             }
         } catch (NullPointerException e) {
             e.printStackTrace();
         }
 
-        Log.e("VOLLEY", volleyError.toString());
         Toast.makeText(activity, R.string.connection_error, Toast.LENGTH_LONG).show();
-        if (progress != null)
-            progress.setVisibility(View.GONE);
     }
 }
